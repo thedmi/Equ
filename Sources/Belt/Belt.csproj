@@ -58,6 +58,9 @@
     <Compile Include="Guard\GuardException.cs" />
     <Compile Include="Guard\Guard.cs" />
     <Compile Include="Guard\ResharperAnnotations.generated.cs" />
+    <Compile Include="Maybe\IMaybe.cs" />
+    <Compile Include="Maybe\IMaybeTryCatch.cs" />
+    <Compile Include="Maybe\Maybe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
