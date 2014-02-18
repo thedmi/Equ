@@ -24,6 +24,7 @@ namespace BeltTest
             Assert.Equal(0, maybe.ItOrDefault);
             Assert.Throws<InvalidOperationException>(() => maybe.It);
             Assert.Throws<InvalidTimeZoneException>(() => maybe.ItOrThrow(new InvalidTimeZoneException()));
+            Assert.Null(maybe.AsNullable());
             Assert.Equal(0, maybe.AsList().Count);
         }
 
@@ -50,6 +51,7 @@ namespace BeltTest
             Assert.Equal(34.2, maybe.It);
             Assert.Equal(34.2, maybe.ItOrDefault);
             Assert.Equal(34.2, maybe.ItOrThrow(new InvalidTimeZoneException()));
+            Assert.Equal(34.2, maybe.AsNullable());
             Assert.Equal(new[] { 34.2 }, maybe.AsList());
         }
 
@@ -64,6 +66,34 @@ namespace BeltTest
             Assert.Equal("Hello", maybe.ItOrDefault);
             Assert.Equal("Hello", maybe.ItOrThrow(new InvalidTimeZoneException()));
             Assert.Equal(new[] { "Hello" }, maybe.AsList());
+        }
+
+        [Fact]
+        public void CanConstructMaybeFromNullable()
+        {
+            var existing = Maybe.FromNullable("Hello");
+            Assert.Equal("Hello", existing.It);
+
+            var emptyRef = Maybe.FromNullable((string)null);
+            Assert.True(emptyRef.IsEmpty);
+            Assert.Null(emptyRef.ItOrDefault);
+
+            var emptyStruct = Maybe.FromNullable((int?)null);
+            Assert.True(emptyStruct.IsEmpty);
+            Assert.Equal(0, emptyStruct.ItOrDefault);
+        }
+
+        [Fact]
+        public void SelectMaintainsTheExistsOrEmptyState()
+        {
+            var lengthMaybe = Maybe.Is("Hello").Select(s => s.Length);
+
+            Assert.True(lengthMaybe.Exists);
+            Assert.Equal(5, lengthMaybe.It);
+
+            var emptyLengthMaybe = Maybe.Empty<string>().Select(s => s.Length);
+
+            Assert.False(emptyLengthMaybe.Exists);
         }
     }
 }
