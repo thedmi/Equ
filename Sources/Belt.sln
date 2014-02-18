@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{12512E75-20FE-42E6-BF58-657734FB36F3}"
+	ProjectSection(SolutionItems) = preProject
+		DecentDonkey.sln.DotSettings = DecentDonkey.sln.DotSettings
+		Settings.StyleCop = Settings.StyleCop
+		ThedmiDefaultFxCop.ruleset = ThedmiDefaultFxCop.ruleset
+		VersionInfo.cs = VersionInfo.cs
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Belt", "Belt\Belt.csproj", "{E7F7EB38-C922-4A12-A18E-09F151E16EAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7F7EB38-C922-4A12-A18E-09F151E16EAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7F7EB38-C922-4A12-A18E-09F151E16EAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7F7EB38-C922-4A12-A18E-09F151E16EAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7F7EB38-C922-4A12-A18E-09F151E16EAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

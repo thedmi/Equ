@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="TheDmi Default Rule Set" Description=" " ToolsVersion="11.0">
+  <Include Path="basiccorrectnessrules.ruleset" Action="Default" />
+  <Include Path="basicdesignguidelinerules.ruleset" Action="Default" />
+  <Include Path="minimumrecommendedrules.ruleset" Action="Default" />
+  <Include Path="securityrules.ruleset" Action="Default" />
+  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+    <Rule Id="CA1006" Action="None" />
+    <Rule Id="CA1014" Action="None" />
+    <Rule Id="CA1303" Action="None" />
+    <Rule Id="CA1308" Action="None" />
+    <Rule Id="CA1505" Action="Warning" />
+    <Rule Id="CA1600" Action="Warning" />
+    <Rule Id="CA1601" Action="Warning" />
+    <Rule Id="CA2000" Action="Warning" />
+    <Rule Id="CA2210" Action="None" />
+    <Rule Id="CA2218" Action="Warning" />
+    <Rule Id="CA2233" Action="Warning" />
+  </Rules>
+</RuleSet>
