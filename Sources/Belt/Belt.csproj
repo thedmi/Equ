@@ -51,6 +51,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FinalList\FinalList.cs" />
+    <Compile Include="FinalList\FinalListAdapter.cs" />
+    <Compile Include="FinalList\FinalListExtensions.cs" />
+    <Compile Include="FinalList\IFinalList.cs" />
     <Compile Include="Guard\GuardException.cs" />
     <Compile Include="Guard\Guard.cs" />
     <Compile Include="Guard\ResharperAnnotations.generated.cs" />
