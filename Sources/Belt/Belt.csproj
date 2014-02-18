@@ -7,7 +7,7 @@
     <ProjectGuid>{E7F7EB38-C922-4A12-A18E-09F151E16EAA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Thedmi.DecentDonkey.Utilities.Utilities</RootNamespace>
+    <RootNamespace>Belt</RootNamespace>
     <AssemblyName>Utilities</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -51,6 +51,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Guard\GuardException.cs" />
+    <Compile Include="Guard\Guard.cs" />
+    <Compile Include="Guard\ResharperAnnotations.generated.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
