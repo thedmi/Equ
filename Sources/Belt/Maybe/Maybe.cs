@@ -117,7 +117,7 @@ namespace Belt.Maybe
                     get { return _value; }
                 }
 
-                public T Nullable { get { return _value; } }
+                public T ItOrDefault { get { return _value; } }
 
                 public bool IsEmpty { get { return false; } }
 
@@ -174,7 +174,7 @@ namespace Belt.Maybe
             {
                 public T It { get { throw new InvalidOperationException("Maybe-value is null."); } }
 
-                public T Nullable { get { return default(T); } }
+                public T ItOrDefault { get { return default(T); } }
 
                 public bool IsEmpty { get { return true; } }
 

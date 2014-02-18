@@ -24,7 +24,7 @@ namespace Belt.Maybe
         /// Returns the value of the Maybe if it exists, null otherwise. This getter
         /// is primarily designed for use with the null coalescing operator.
         /// </summary>
-        T Nullable { get; }
+        T ItOrDefault { get; }
 
         /// <summary>
         /// Returns <see cref="It"/> or throws <paramref name="exception"/> if it doesn't exist.
