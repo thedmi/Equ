@@ -18,7 +18,7 @@ namespace Belt.FinalList
 
         public FinalListAdapter(params T[] values)
         {
-            _list = ImmutableList.Create(values);
+            _list = System.Collections.Immutable.ImmutableList.Create(values);
         }
 
         public FinalListAdapter(ImmutableList<T> immutableList)
@@ -44,6 +44,6 @@ namespace Belt.FinalList
 
         public bool IsEmpty { get { return _list.IsEmpty; } }
 
-        public ImmutableList<T> AsImmutableList { get { return _list; } }
+        public ImmutableList<T> ImmutableList { get { return _list; } }
     }
 }

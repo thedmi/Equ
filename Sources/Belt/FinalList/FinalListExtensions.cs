@@ -95,7 +95,7 @@ namespace Belt.FinalList
             var adapter = source as FinalListAdapter<T>;
             if (adapter != null)
             {
-                return function(adapter.AsImmutableList);
+                return function(adapter.ImmutableList);
             }
             return function(source);
         }
