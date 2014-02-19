@@ -9,6 +9,7 @@ namespace BeltTest
     using System;
     using System.Collections.Generic;
 
+    using Belt.FinalList;
     using Belt.Maybe;
 
     using Xunit;
@@ -83,6 +84,15 @@ namespace BeltTest
         {
             var list = new List<int> { 4, 7, 9 };
             Assert.Throws<InvalidOperationException>(() => list.SingleAsMaybe(IsOdd));
+        }
+
+        [Fact]
+        public void ExistingOnlyFiltersOutNonexistentElements()
+        {
+            var input = FinalList.Create(Maybe.Is(2), Maybe.Is(5), Maybe.Empty<int>(), Maybe.Is(1));
+            var result = input.ExistingOnly();
+
+            Assert.Equal(new[] { 2, 5, 1 }, result);
         }
 
         private static bool IsOdd(int i)

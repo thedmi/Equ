@@ -65,5 +65,10 @@ namespace Belt.Maybe
                     throw new InvalidOperationException("Source contains more than one element");
             }
         }
+
+        public static IEnumerable<T> ExistingOnly<T>(this IEnumerable<IMaybe<T>> source)
+        {
+            return source.SelectMany(m => m.AsList());
+        } 
     }
 }
