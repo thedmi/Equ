@@ -49,9 +49,15 @@ namespace Belt.Maybe
         IFinalList<T> AsList();
 
         /// <summary>
-        /// Maps the maybe to a new maybe of another type using the mapping function <paramref name="f"/> while
+        /// Maps the maybe to a new maybe of another type using the mapping function <paramref name="selector"/> while
         /// preserving the existing/empty state.
         /// </summary>
-        IMaybe<TOut> Select<TOut>(Func<T, TOut> f);
+        IMaybe<TResult> Select<TResult>(Func<T, TResult> selector);
+
+        /// <summary>
+        /// Calls the <paramref name="selector"/> with the value of this maybe if it exists, or returns an 
+        /// empty maybe otherwise.
+        /// </summary>
+        IMaybe<TResult> SelectMany<TResult>(Func<T, IMaybe<TResult>> selector);
     }
 }
