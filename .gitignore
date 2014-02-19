@@ -18,3 +18,4 @@ obj/
 _ReSharper*/
 */.idea/*
 Sources/packages
+*.nupkg

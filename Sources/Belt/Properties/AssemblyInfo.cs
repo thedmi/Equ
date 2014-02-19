@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Belt")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A utility library for expressive programming")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("Belt")]
 [assembly: AssemblyTrademark("")]
