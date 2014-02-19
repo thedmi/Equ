@@ -58,6 +58,7 @@
     <Compile Include="Guard\GuardException.cs" />
     <Compile Include="Guard\Guard.cs" />
     <Compile Include="Guard\ResharperAnnotations.generated.cs" />
+    <Compile Include="Maybe\EnumerableExtensions.cs" />
     <Compile Include="Maybe\IMaybe.cs" />
     <Compile Include="Maybe\IMaybeTryCatch.cs" />
     <Compile Include="Maybe\Maybe.cs" />
