@@ -1,7 +1,9 @@
 Belt
 ====
 
-A very lightweight utility library for expressive .NET. 
+A very lightweight utility library for increased expressiveness. Provides concepts for immutable lists, maybes (optional values) and a very simple guard library.
+
+Also available as [nuget package](https://www.nuget.org/packages/Belt/).
 
 
 Final List
