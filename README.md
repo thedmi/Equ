@@ -37,6 +37,17 @@ In my programs, `null` is never, ever a valid value and always considered a bug.
 If we cannot use null for optional things like 0..1 relations, we need something else. Enter `IMaybe<T>`. You will never ask yourself again "do I need a null check here?".
 
 
+ValueBasedEquatable
+--------------------
+
+Implementing equality operations is a common task that introduces a lot of noise into the respective classes. Most of the time, the goal is the same: Implementing the equality members based on one or more values.
+
+The abstract `ValueBasedEquatable<TSelf, TValue>` class is a reusable, null-safe and correct equality 
+implementation based on `TValue`. The class implements `IEquatable` and overrides `Equals()`, `GetHashCode()`, `ToString()` and the equality operators.
+
+Equality based on more than one value can easily be implemented by using a `Tuple` of the desired type as `TValue`.
+
+
 Guards
 ------
 
