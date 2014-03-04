@@ -63,6 +63,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="ValueBasedEquatableTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Belt\Belt.csproj">
