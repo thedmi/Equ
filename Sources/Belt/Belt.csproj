@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Equatable\ValueBasedEquatable.cs" />
     <Compile Include="FinalList\FinalList.cs" />
     <Compile Include="FinalList\FinalListAdapter.cs" />
     <Compile Include="FinalList\FinalListExtensions.cs" />
