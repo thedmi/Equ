@@ -30,7 +30,7 @@ namespace Belt.FinalList
             return new FinalListAdapter<T>(ImmutableList.CreateRange(source));
         }
 
-        public static IImmutableList<T> AsImmutableList<T>(this IFinalList<T> source)
+        public static ImmutableList<T> AsImmutableList<T>(this IFinalList<T> source)
         {
             var finalList = source as FinalListAdapter<T>;
             if (finalList != null)
