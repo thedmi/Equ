@@ -6,15 +6,22 @@
 
 namespace Belt.FinalList
 {
+    using System.Collections;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
 
     /// <summary>
     /// A covariant, immutable list with eager-loading semantics.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IFinalList<out T> : IReadOnlyList<T>
+    public interface IFinalList<out T> : IReadOnlyList<T>, IFinalList
     {
-        bool IsEmpty { get; }
+    }
+
+    /// <summary>
+    /// A non-generic immutable list. Use <see cref="IFinalList{T}"/> where possible.
+    /// </summary>
+    public interface IFinalList : IEnumerable
+    {
+        bool IsEmpty { get; }   
     }
 }
