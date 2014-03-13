@@ -11,8 +11,8 @@
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>ValueBasedEquatable added.</releaseNotes>
+    <releaseNotes>Non-generic base interface IFinalList added.</releaseNotes>
     <copyright>Copyright 2014</copyright>
-    <tags></tags>
+    <tags>immutable, guard, maybe, equatable, ddd</tags>
   </metadata>
 </package>
