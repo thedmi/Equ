@@ -55,6 +55,9 @@
     <Compile Include="Guard\GuardException.cs" />
     <Compile Include="Guard\Guard.cs" />
     <Compile Include="Guard\ResharperAnnotations.generated.cs" />
+    <Compile Include="Lazy\ILazy.cs" />
+    <Compile Include="Lazy\Lazy.cs" />
+    <Compile Include="Lazy\LazyAdapter.cs" />
     <Compile Include="Maybe\EnumerableExtensions.cs" />
     <Compile Include="Maybe\IMaybe.cs" />
     <Compile Include="Maybe\IMaybeTryCatch.cs" />
