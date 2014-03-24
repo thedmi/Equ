@@ -11,8 +11,8 @@
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Non-generic base interface IFinalList added.</releaseNotes>
+    <releaseNotes>Covariant lazy type added.</releaseNotes>
     <copyright>Copyright 2014</copyright>
-    <tags>immutable, guard, maybe, equatable, ddd</tags>
+    <tags>immutable, guard, maybe, equatable, lazy, ddd</tags>
   </metadata>
 </package>
