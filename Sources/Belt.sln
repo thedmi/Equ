@@ -1,9 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{12512E75-20FE-42E6-BF58-657734FB36F3}"
 	ProjectSection(SolutionItems) = preProject
 		DecentDonkey.sln.DotSettings = DecentDonkey.sln.DotSettings
+		PackNuget.ps1 = PackNuget.ps1
 		Settings.StyleCop = Settings.StyleCop
 		ThedmiDefaultFxCop.ruleset = ThedmiDefaultFxCop.ruleset
 		VersionInfo.cs = VersionInfo.cs
