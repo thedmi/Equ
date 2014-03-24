@@ -1,7 +1,7 @@
 Belt
 ====
 
-A very lightweight utility library for increased expressiveness. Provides concepts for immutable lists, maybes (optional values) and a very simple guard library.
+This is a very lightweight utility library that increases expressiveness of your programs. It provides concepts for immutable lists, maybes (optional values) and a very simple guard library.
 
 Also available as [nuget package](https://www.nuget.org/packages/Belt/).
 
@@ -17,7 +17,7 @@ The motivation for `IFinalList` was that there is no concept of a list in .NET t
 - `System.Collections.Immutable.IImmutableList<T>` is immutable and carries eager loading semantics, but is not covariant in T
 - `IEnumerable<T>` is covariant in T, but uses lazy-loading and also read-only semantics
 
-`System.Collections.Immutable.IImmutableList<T>` would have been the perfect candidate for an immutable list concept. But unfortunately, someone decided to provide the immutable `Add()`, `Remove()` and similar methods not only on the implementation `ImmutableList<T>`, but also on the interface.
+`System.Collections.Immutable.IImmutableList<T>` would have been the perfect candidate for an immutable list concept. But unfortunately, someone decided to provide the immutable `Add()`, `Remove()` and similar methods not only on the implementation `ImmutableList<T>`, but also on the interface, effectively making the item type invariant. 
 
 To differentiate the immutable list of this library from `System.Collections.Immutable.IImmutableList<T>`, I call it a *Final List*. 
 
@@ -35,6 +35,12 @@ In my programs, `null` is never, ever a valid value and always considered a bug.
 - There is no implicit, hidden, incomprehensible notion of a nonexisting value that would be a valid method parameter to mean "nothing" or "empty" or the like.
 
 If we cannot use null for optional things like 0..1 relations, we need something else. Enter `IMaybe<T>`. You will never ask yourself again "do I need a null check here?".
+
+
+Lazy 
+-----
+
+The `ILazy<T>` interface denotes a lazily evaluated, covariant type wrapper for T. It uses `System.Lazy` internally, so this library just wraps it to achieve covariance.
 
 
 ValueBasedEquatable
