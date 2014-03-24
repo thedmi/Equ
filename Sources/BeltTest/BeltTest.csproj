@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FinalListAdapterTest.cs" />
+    <Compile Include="LazyTest.cs" />
     <Compile Include="MaybeEnumerableExtensionsTest.cs" />
     <Compile Include="MaybeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
