@@ -23,12 +23,12 @@ namespace BeltTest
                     // Close over 'evaluated' for the sake of the test
                     // (don't do this in production)
                     evaluated = true;
-                    return 0;
+                    return 42;
                 });
 
             Assert.False(evaluated);
 
-            Assert.NotNull(lazy.Value);
+            Assert.Equal(42, lazy.Value);
 
             Assert.True(evaluated);
         }
