@@ -8,10 +8,9 @@
     <owners>$author$</owners>
     <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
     <projectUrl>https://github.com/thedmi/Belt</projectUrl>
-    <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Covariant lazy type added.</releaseNotes>
+    <releaseNotes>Extension method for the retrieval of IMaybe values from an IDictionary added.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>immutable, guard, maybe, equatable, lazy, ddd</tags>
   </metadata>
