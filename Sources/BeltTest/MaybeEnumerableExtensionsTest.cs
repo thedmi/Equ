@@ -95,6 +95,15 @@ namespace BeltTest
             Assert.Equal(new[] { 2, 5, 1 }, result);
         }
 
+        [Fact]
+        public void GetFromDictionaryReturnsCorrectMaybes()
+        {
+            var input = new Dictionary<int, string> { { 1, "one" }, { 2, "two" } };
+
+            Assert.Equal("one", input.Get(1).It);
+            Assert.True(input.Get(3).IsEmpty);
+        }
+
         private static bool IsOdd(int i)
         {
             return i % 2 == 1;

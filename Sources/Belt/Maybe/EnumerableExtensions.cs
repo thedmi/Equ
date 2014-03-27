@@ -94,6 +94,18 @@ namespace Belt.Maybe
         public static IEnumerable<T> ExistingOnly<T>(this IEnumerable<IMaybe<T>> source)
         {
             return source.SelectMany(m => m.AsList());
+        }
+
+        /// <summary>
+        /// Looks up a key and returns the associated value wrapped in an <see cref="IMaybe{T}"/>,
+        /// or an empty <see cref="IMaybe{T}"/> if the key doesn't exist.
+        /// </summary>
+        public static IMaybe<TValue> Get<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key)
+        {
+            TValue value;
+            var exists = source.TryGetValue(key, out value);
+
+            return exists ? Maybe.Is(value) : Maybe.Empty<TValue>();
         } 
     }
 }
