@@ -8,5 +8,5 @@ using System.Reflection;
 
 [assembly: AssemblyCompany("Dani Michel")]
 [assembly: AssemblyCopyright("Copyright © 2014")]
-[assembly: AssemblyVersion("0.4.0.*")]
-[assembly: AssemblyInformationalVersion("Belt 0.4.0")]
+[assembly: AssemblyVersion("0.5.0.*")]
+[assembly: AssemblyInformationalVersion("Belt 0.5.0")]

@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/thedmi/Belt</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Extension method for the retrieval of IMaybe values from an IDictionary added.</releaseNotes>
+    <releaseNotes>Item-based sequence equality support for ValueBasedEquatable implemented.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>immutable, guard, maybe, equatable, lazy, ddd</tags>
   </metadata>
