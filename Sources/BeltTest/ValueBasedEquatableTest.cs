@@ -6,6 +6,8 @@
 
 namespace BeltTest
 {
+    using System.Collections.Generic;
+
     using Belt.Equatable;
 
     using Xunit;
@@ -42,6 +44,16 @@ namespace BeltTest
             Assert.Equal(x.GetHashCode(), y.GetHashCode());
         }
 
+        [Fact]
+        public void EqualityBasedOnSequenceValuesComparesByElement()
+        {
+            var seq1 = new TestSequenceValue(new List<TestValue> { new TestValue(1), new TestValue(2) });
+            var seq2 = new TestSequenceValue(new [] { new TestValue(1), new TestValue(2) });
+
+            Assert.Equal(seq1, seq2);
+            Assert.True(seq1 == seq2);
+        }
+
         private class TestValue : ValueBasedEquatable<TestValue, int>
         {
             private readonly int _value;
@@ -52,6 +64,18 @@ namespace BeltTest
             }
 
             protected override int EquatableValue { get { return _value; } }
+        }
+
+        private class TestSequenceValue : ValueBasedEquatable<TestSequenceValue, EquatableSequenceWrapper<TestValue>>
+        {
+            private readonly IEnumerable<TestValue> _values;
+
+            public TestSequenceValue(IEnumerable<TestValue> values)
+            {
+                _values = values;
+            }
+
+            protected override EquatableSequenceWrapper<TestValue> EquatableValue { get { return _values.AsEquatableSequence(); } }
         }
     }
 }
