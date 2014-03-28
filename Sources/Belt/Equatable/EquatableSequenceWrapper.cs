@@ -44,5 +44,12 @@
         {
             return _enumerable.Aggregate(0, (current, item) => current ^ item.GetHashCode());
         }
+
+        public override string ToString()
+        {
+            return "[ "
+                   + _enumerable.Aggregate("", (accu, item) => accu + item.ToString() + ", ")
+                       .TrimEnd(new[] { ' ', ',' }) + " ]";
+        }
     }
 }

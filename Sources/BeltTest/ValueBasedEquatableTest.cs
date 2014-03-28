@@ -54,6 +54,14 @@ namespace BeltTest
             Assert.True(seq1 == seq2);
         }
 
+        [Fact]
+        public void EqualityBasedSequencesConvertToStringAsArray()
+        {
+            var seq = new TestSequenceValue(new[] { new TestValue(1), new TestValue(2) });
+
+            Assert.Equal("[ 1, 2 ]", seq.ToString());
+        }
+
         private class TestValue : ValueBasedEquatable<TestValue, int>
         {
             private readonly int _value;
