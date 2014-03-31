@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/thedmi/Belt</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Item-based sequence equality support for ValueBasedEquatable implemented.</releaseNotes>
+    <releaseNotes>IMaybe.ItOrThrow() improved.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>immutable, guard, maybe, equatable, lazy, ddd</tags>
   </metadata>
