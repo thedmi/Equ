@@ -29,7 +29,13 @@ namespace Belt.Maybe
         /// <summary>
         /// Returns <see cref="It"/> or throws <paramref name="exception"/> if it doesn't exist.
         /// </summary>
+        [Obsolete]
         T ItOrThrow(Exception exception);
+
+        /// <summary>
+        /// Returns <see cref="It"/> or throws the exception created by <paramref name="exceptionCreator"/> if it doesn't exist.
+        /// </summary>
+        T ItOrThrow(Func<Exception> exceptionCreator);
 
         /// <summary>
         /// Returns true if there is no value in this maybe.

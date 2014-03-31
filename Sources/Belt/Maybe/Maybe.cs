@@ -118,12 +118,16 @@ namespace Belt.Maybe
                 }
 
                 public T ItOrDefault { get { return _value; } }
-
+                
                 public bool IsEmpty { get { return false; } }
 
                 public bool Exists { get { return true; } }
 
                 public T ItOrThrow(Exception exception)
+                {
+                    return It;
+                }
+                public T ItOrThrow(Func<Exception> exceptionCreator)
                 {
                     return It;
                 }
@@ -188,6 +192,11 @@ namespace Belt.Maybe
                 public T ItOrThrow(Exception exception)
                 {
                     throw exception;
+                }
+
+                public T ItOrThrow(Func<Exception> exceptionCreator)
+                {
+                    throw exceptionCreator();
                 }
 
                 public IFinalList<T> AsList()

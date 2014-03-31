@@ -12,6 +12,7 @@ namespace BeltTest
 
     using Xunit;
 
+#pragma warning disable 612
     public class MaybeTest
     {
         [Fact]
@@ -24,6 +25,7 @@ namespace BeltTest
             Assert.Equal(0, maybe.ItOrDefault);
             Assert.Throws<InvalidOperationException>(() => maybe.It);
             Assert.Throws<InvalidTimeZoneException>(() => maybe.ItOrThrow(new InvalidTimeZoneException()));
+            Assert.Throws<InvalidTimeZoneException>(() => maybe.ItOrThrow(() => new InvalidTimeZoneException()));
             Assert.Null(maybe.AsNullable());
             Assert.Equal(0, maybe.AsList().Count);
         }
@@ -38,6 +40,7 @@ namespace BeltTest
             Assert.Null(maybe.ItOrDefault);
             Assert.Throws<InvalidOperationException>(() => maybe.It);
             Assert.Throws<InvalidTimeZoneException>(() => maybe.ItOrThrow(new InvalidTimeZoneException()));
+            Assert.Throws<InvalidTimeZoneException>(() => maybe.ItOrThrow(() => new InvalidTimeZoneException()));
             Assert.Equal(0, maybe.AsList().Count);
         }
 
@@ -51,6 +54,7 @@ namespace BeltTest
             Assert.Equal(34.2, maybe.It);
             Assert.Equal(34.2, maybe.ItOrDefault);
             Assert.Equal(34.2, maybe.ItOrThrow(new InvalidTimeZoneException()));
+            Assert.Equal(34.2, maybe.ItOrThrow(() => new InvalidTimeZoneException()));
             Assert.Equal(34.2, maybe.AsNullable());
             Assert.Equal(new[] { 34.2 }, maybe.AsList());
         }
@@ -65,6 +69,7 @@ namespace BeltTest
             Assert.Equal("Hello", maybe.It);
             Assert.Equal("Hello", maybe.ItOrDefault);
             Assert.Equal("Hello", maybe.ItOrThrow(new InvalidTimeZoneException()));
+            Assert.Equal("Hello", maybe.ItOrThrow(() => new InvalidTimeZoneException()));
             Assert.Equal(new[] { "Hello" }, maybe.AsList());
         }
 
@@ -96,4 +101,5 @@ namespace BeltTest
             Assert.False(emptyLengthMaybe.Exists);
         }
     }
+#pragma warning restore 612
 }
