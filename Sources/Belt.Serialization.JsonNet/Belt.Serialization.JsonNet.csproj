@@ -53,6 +53,7 @@
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
     <Compile Include="FinalListConverter.cs" />
+    <Compile Include="JsonNetExtensions.cs" />
     <Compile Include="LazyConverter.cs" />
     <Compile Include="MaybeConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

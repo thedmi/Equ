@@ -11,10 +11,7 @@
 
     public class FinalListConverterTest
     {
-        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
-        {
-            Converters = new JsonConverter[] { new FinalListConverter() }
-        };
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings().ConfigureForBelt();
 
         [Fact]
         public void Can_roundtrip_value_typed_final_list_with_content()

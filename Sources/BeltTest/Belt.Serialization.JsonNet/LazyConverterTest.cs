@@ -11,10 +11,7 @@
 
     public class LazyConverterTest
     {
-        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
-        {
-            Converters = new JsonConverter[] { new LazyConverter() }
-        };
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings().ConfigureForBelt();
 
         [Fact]
         public void Can_roundtrip_value_typed_lazy()

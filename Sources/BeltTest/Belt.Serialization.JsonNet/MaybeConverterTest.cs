@@ -11,10 +11,7 @@
 
     public class MaybeConverterTest
     {
-        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
-        {
-            Converters = new JsonConverter[] { new MaybeConverter() }
-        };
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings().ConfigureForBelt();
 
         [Fact]
         public void Empty_maybe_roundtrips_successfully_to_json()
