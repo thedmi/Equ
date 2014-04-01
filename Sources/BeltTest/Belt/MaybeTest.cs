@@ -4,11 +4,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace BeltTest
+namespace BeltTest.Belt
 {
     using System;
 
-    using Belt.Maybe;
+    using global::Belt.Maybe;
 
     using Xunit;
 

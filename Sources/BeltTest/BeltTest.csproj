@@ -56,15 +56,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FinalListAdapterTest.cs" />
-    <Compile Include="LazyTest.cs" />
-    <Compile Include="MaybeEnumerableExtensionsTest.cs" />
-    <Compile Include="MaybeTest.cs" />
+    <Compile Include="Belt\FinalListAdapterTest.cs" />
+    <Compile Include="Belt\LazyTest.cs" />
+    <Compile Include="Belt\MaybeEnumerableExtensionsTest.cs" />
+    <Compile Include="Belt\MaybeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="ValueBasedEquatableTest.cs" />
+    <Compile Include="Belt\ValueBasedEquatableTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Belt\Belt.csproj">

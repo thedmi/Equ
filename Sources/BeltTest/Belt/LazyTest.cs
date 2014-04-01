@@ -4,9 +4,9 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace BeltTest
+namespace BeltTest.Belt
 {
-    using Belt.Lazy;
+    using global::Belt.Lazy;
 
     using Xunit;
 

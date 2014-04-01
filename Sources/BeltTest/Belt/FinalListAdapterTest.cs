@@ -4,11 +4,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace BeltTest
+namespace BeltTest.Belt
 {
     using System.Collections.Immutable;
 
-    using Belt.FinalList;
+    using global::Belt.FinalList;
 
     using Xunit;
 

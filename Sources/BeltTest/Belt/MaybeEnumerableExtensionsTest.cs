@@ -4,13 +4,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace BeltTest
+namespace BeltTest.Belt
 {
     using System;
     using System.Collections.Generic;
 
-    using Belt.FinalList;
-    using Belt.Maybe;
+    using global::Belt.FinalList;
+    using global::Belt.Maybe;
 
     using Xunit;
 

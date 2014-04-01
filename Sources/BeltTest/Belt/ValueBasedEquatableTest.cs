@@ -4,11 +4,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace BeltTest
+namespace BeltTest.Belt
 {
     using System.Collections.Generic;
 
-    using Belt.Equatable;
+    using global::Belt.Equatable;
 
     using Xunit;
 
