@@ -13,7 +13,7 @@ namespace Belt.Maybe
     /// <summary>
     /// Represents values of type <typeparamref name="T"/> that may or may not exist.
     /// </summary>
-    public interface IMaybe<out T>
+    public interface IMaybe<out T> : IMaybe
     {
         /// <summary>
         /// Returns the actual value of the Maybe and throws if it is empty.
@@ -38,16 +38,6 @@ namespace Belt.Maybe
         T ItOrThrow(Func<Exception> exceptionCreator);
 
         /// <summary>
-        /// Returns true if there is no value in this maybe.
-        /// </summary>
-        bool IsEmpty { get; }
-
-        /// <summary>
-        /// Returns true if a value exists and accessing <see cref="It"/> is safe.
-        /// </summary>
-        bool Exists { get; }
-
-        /// <summary>
         /// Returns the maybe as immutable list of T. This list has the length of one if the maybe
         /// exists, or zero if the maybe is empty.
         /// </summary>
@@ -65,5 +55,18 @@ namespace Belt.Maybe
         /// empty maybe otherwise.
         /// </summary>
         IMaybe<TResult> SelectMany<TResult>(Func<T, IMaybe<TResult>> selector);
+    }
+
+    public interface IMaybe
+    {
+        /// <summary>
+        /// Returns true if there is no value in this maybe.
+        /// </summary>
+        bool IsEmpty { get; }
+
+        /// <summary>
+        /// Returns true if a value exists and accessing it is safe.
+        /// </summary>
+        bool Exists { get; }
     }
 }
