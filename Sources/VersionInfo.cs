@@ -4,9 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Reflection;
-
-[assembly: AssemblyCompany("Dani Michel")]
-[assembly: AssemblyCopyright("Copyright © 2014")]
-[assembly: AssemblyVersion("0.6.0.*")]
-[assembly: AssemblyInformationalVersion("Belt 0.6.0")]
+[assembly: System.Reflection.AssemblyCompany("Dani Michel")]
+[assembly: System.Reflection.AssemblyCopyright("Copyright © 2014")]
+[assembly: System.Reflection.AssemblyVersion("0.6.0.*")]
+[assembly: System.Reflection.AssemblyInformationalVersion("Belt 0.6.0")]
