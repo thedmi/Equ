@@ -37,6 +37,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.0.30.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -56,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Belt.Serialization.JsonNet\MaybeSerializerTest.cs" />
     <Compile Include="Belt\FinalListAdapterTest.cs" />
     <Compile Include="Belt\LazyTest.cs" />
     <Compile Include="Belt\MaybeEnumerableExtensionsTest.cs" />
@@ -67,6 +72,10 @@
     <Compile Include="Belt\ValueBasedEquatableTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Belt.Serialization.JsonNet\Belt.Serialization.JsonNet.csproj">
+      <Project>{5A9F6824-067E-4E26-8CBB-6AA2C112059A}</Project>
+      <Name>Belt.Serialization.JsonNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Belt\Belt.csproj">
       <Project>{e7f7eb38-c922-4a12-a18e-09f151e16eaa}</Project>
       <Name>Belt</Name>
@@ -75,6 +84,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
