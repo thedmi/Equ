@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Belt.Serialization.JsonNet")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Json.Net serialization extension for Belt")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("Belt.Serialization.JsonNet")]
 [assembly: AssemblyTrademark("")]
