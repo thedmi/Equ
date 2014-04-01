@@ -9,7 +9,7 @@
 
     using Xunit;
 
-    public class FinalListSerializerTest
+    public class FinalListConverterTest
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {

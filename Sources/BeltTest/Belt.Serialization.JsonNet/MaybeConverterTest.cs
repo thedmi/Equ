@@ -9,7 +9,7 @@
 
     using Xunit;
 
-    public class MaybeSerializerTest
+    public class MaybeConverterTest
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {

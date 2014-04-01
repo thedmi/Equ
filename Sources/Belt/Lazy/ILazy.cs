@@ -6,8 +6,10 @@
 
 namespace Belt.Lazy
 {
-    public interface ILazy<out T>
+    public interface ILazy<out T> : ILazy
     {
         T Value { get; }
     }
+
+    public interface ILazy { }
 }
