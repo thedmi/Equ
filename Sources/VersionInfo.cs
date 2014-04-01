@@ -6,5 +6,5 @@
 
 [assembly: System.Reflection.AssemblyCompany("Dani Michel")]
 [assembly: System.Reflection.AssemblyCopyright("Copyright © 2014")]
-[assembly: System.Reflection.AssemblyVersion("0.6.0.*")]
-[assembly: System.Reflection.AssemblyInformationalVersion("Belt 0.6.0")]
+[assembly: System.Reflection.AssemblyVersion("0.7.0.*")]
+[assembly: System.Reflection.AssemblyInformationalVersion("Belt 0.7.0")]

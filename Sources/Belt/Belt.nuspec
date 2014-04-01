@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/thedmi/Belt</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>IMaybe.ItOrThrow() improved.</releaseNotes>
+    <releaseNotes>Supporting changes for the new serialization library.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>immutable, guard, maybe, equatable, lazy, ddd</tags>
   </metadata>
