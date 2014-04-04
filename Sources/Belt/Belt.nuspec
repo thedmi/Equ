@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/thedmi/Belt</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Supporting changes for the new serialization library.</releaseNotes>
+    <releaseNotes>Minor usability improvements.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>immutable, guard, maybe, equatable, lazy, ddd</tags>
   </metadata>
