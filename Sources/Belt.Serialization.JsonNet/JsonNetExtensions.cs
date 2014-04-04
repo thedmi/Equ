@@ -12,5 +12,14 @@
 
             return settings;
         }
+
+        public static JsonSerializer ConfigureForBelt(this JsonSerializer serializer)
+        {
+            serializer.Converters.Add(new FinalListConverter());
+            serializer.Converters.Add(new MaybeConverter());
+            serializer.Converters.Add(new LazyConverter());
+
+            return serializer;
+        }
     }
 }
