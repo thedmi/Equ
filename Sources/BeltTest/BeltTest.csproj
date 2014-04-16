@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Belt.Serialization.JsonNet\ComplexObjectConversionTest.cs" />
     <Compile Include="Belt.Serialization.JsonNet\FinalListConverterTest.cs" />
     <Compile Include="Belt.Serialization.JsonNet\LazyConverterTest.cs" />
     <Compile Include="Belt.Serialization.JsonNet\MaybeConverterTest.cs" />

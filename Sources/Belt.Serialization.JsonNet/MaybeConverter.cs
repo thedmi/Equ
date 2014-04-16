@@ -26,7 +26,7 @@
             }
             else
             {
-                writer.WriteNull();
+                serializer.Serialize(writer, null);
             }
         }
 
