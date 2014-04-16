@@ -10,11 +10,12 @@
     <projectUrl>https://github.com/thedmi/Belt</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Configuration convenience method for JsonSerializer added.</releaseNotes>
+    <releaseNotes>Maybe serialization improved.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>immutable, guard, maybe, equatable, lazy, ddd</tags>
     <dependencies>
-      <dependency id="Belt" version="$version$" />
+      <!-- TODO Change version number accordingly -->
+      <dependency id="Belt" version="0.8.1" />
     </dependencies>
   </metadata>
 </package>
