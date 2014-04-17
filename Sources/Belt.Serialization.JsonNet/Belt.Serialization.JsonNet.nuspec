@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/thedmi/Belt</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Maybe serialization improved.</releaseNotes>
+    <releaseNotes>Maybes are now serialized as array of length zero (empty maybe) or one (maybe exists).</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>immutable, guard, maybe, equatable, lazy, ddd</tags>
     <dependencies>
