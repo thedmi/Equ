@@ -1,6 +1,8 @@
 ﻿namespace Belt.Serialization.JsonNet
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
 
@@ -19,28 +21,25 @@
         {
             var maybe = (IMaybe)value;
 
+            writer.WriteStartArray();
             if (maybe.Exists)
             {
                 var innerValue = maybe.GetType().GetProperty("It").GetValue(maybe);
                 serializer.Serialize(writer, innerValue);
             }
-            else
-            {
-                serializer.Serialize(writer, null);
-            }
+            writer.WriteEndArray();
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var nestedType = objectType.GenericTypeArguments.Single();
 
-            if (reader.TokenType == JsonToken.Null)
-            {
-                return _emptyCreatorMethod.MakeGenericMethod(nestedType).Invoke(null, new object[] { });
-            }
+            var listType = typeof (IList<>).MakeGenericType(nestedType);
+            var valueList = (IList)serializer.Deserialize(reader, listType);
 
-            var nestedValue = serializer.Deserialize(reader, nestedType);
-            return _existingCreatorMethod.MakeGenericMethod(nestedType).Invoke(null, new[] { nestedValue });
+            return valueList.Count == 0
+                ? _emptyCreatorMethod.MakeGenericMethod(nestedType).Invoke(null, new object[] { })
+                : _existingCreatorMethod.MakeGenericMethod(nestedType).Invoke(null, new[] { valueList[0] });
         }
 
         public override bool CanConvert(Type objectType)
