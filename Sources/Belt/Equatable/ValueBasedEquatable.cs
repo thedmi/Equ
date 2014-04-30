@@ -8,7 +8,7 @@ namespace Belt.Equatable
 {
     using System;
 
-    public abstract class ValueBasedEquatable<TSelf, TValue> : IEquatable<ValueBasedEquatable<TSelf, TValue>>, IValueBasedEquatable
+    public abstract class ValueBasedEquatable<TSelf, TValue> : IEquatable<ValueBasedEquatable<TSelf, TValue>>, IValueBasedEquatable<TValue>
     {
         protected abstract TValue EquatableValue { get; }
 
