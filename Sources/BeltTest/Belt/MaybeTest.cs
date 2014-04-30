@@ -100,6 +100,19 @@ namespace BeltTest.Belt
 
             Assert.False(emptyLengthMaybe.Exists);
         }
+
+        [Fact]
+        public void CanCastObjectMaybeToStringMaybe()
+        {
+            var maybe = Maybe.Is((object)"Hello").Cast<string>();
+
+            Assert.True(maybe.Exists);
+            Assert.Equal("Hello", maybe.It);
+
+            var empty = Maybe.Empty<string>().Cast<object>();
+
+            Assert.False(empty.Exists);
+        }
     }
 #pragma warning restore 612
 }

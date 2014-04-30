@@ -137,16 +137,6 @@ namespace Belt.Maybe
                     return FinalList.Create(_value);
                 }
 
-                public IMaybe<TResult> Select<TResult>(Func<T, TResult> selector)
-                {
-                    return new Existing<TResult>(selector(_value));
-                }
-
-                public IMaybe<TResult> SelectMany<TResult>(Func<T, IMaybe<TResult>> selector)
-                {
-                    return selector(_value);
-                }
-
                 private bool Equals(Existing<T> other)
                 {
                     return Equals(_value, other._value);
@@ -202,16 +192,6 @@ namespace Belt.Maybe
                 public IFinalList<T> AsList()
                 {
                     return FinalList.Empty<T>();
-                }
-
-                public IMaybe<TResult> Select<TResult>(Func<T, TResult> selector)
-                {
-                    return new Empty<TResult>();
-                }
-
-                public IMaybe<TResult> SelectMany<TResult>(Func<T, IMaybe<TResult>> selector)
-                {
-                    return Maybe.Empty<TResult>();
                 }
 
                 public override bool Equals(object obj)
