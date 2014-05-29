@@ -8,6 +8,7 @@ namespace BeltTest.Belt
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using global::Belt.FinalList;
     using global::Belt.Maybe;

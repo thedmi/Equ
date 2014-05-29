@@ -20,18 +20,18 @@ namespace Belt.Maybe
         /// <param name="value">The value of the maybe. Must not be null</param>
         [Pure]
         [DebuggerStepThrough]
-        public static IMaybe<T> Is<T>(T value)
+        public static Maybe<T> Is<T>(T value)
         {
-            return new Impl.Existing<T>(value);
+            return new Maybe<T>(value);
         }
 
         /// <summary>
         /// Creates an empty <c>IMaybe</c>.
         /// </summary>
         [Pure]
-        public static IMaybe<T> Empty<T>()
+        public static Maybe<T> Empty<T>()
         {
-            return new Impl.Empty<T>();
+            return new Maybe<T>();
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Belt.Maybe
         /// </summary>
         [Pure]
         [DebuggerStepThrough]
-        public static IMaybe<T> FromNullable<T>(T value) where T : class
+        public static Maybe<T> FromNullable<T>(T value) where T : class
         {
             return value != null ? Is(value) : Empty<T>();
         }
@@ -51,7 +51,7 @@ namespace Belt.Maybe
         /// </summary>
         [Pure]
         [DebuggerStepThrough]
-        public static IMaybe<T> FromNullable<T>(T? value) where T : struct
+        public static Maybe<T> FromNullable<T>(T? value) where T : struct
         {
             return value.HasValue ? Is(value.Value) : Empty<T>();
         }
@@ -90,129 +90,70 @@ namespace Belt.Maybe
                 }
             }
         }
+    }
 
-        private static class Impl
+    public struct Maybe<T> : IMaybe<T>
+    {
+        private readonly bool _exists;
+
+        private readonly T _value;
+
+        public Maybe(T existingValue)
         {
-            [DebuggerStepThrough]
-            internal sealed class Existing<T> : IMaybe<T>
+            // If value is a value type, the comparison will always yield false, see
+            // http://stackoverflow.com/a/5340850/219187
+            // ReSharper disable CompareNonConstrainedGenericWithNull
+            if (existingValue == null)
+            // ReSharper restore CompareNonConstrainedGenericWithNull
             {
-                private readonly T _value;
-
-                public Existing(T value)
-                {
-                    // If value is a value type, the comparison will always yield false, see
-                    // http://stackoverflow.com/a/5340850/219187
-                    // ReSharper disable CompareNonConstrainedGenericWithNull
-                    if (value == null)
-                    // ReSharper restore CompareNonConstrainedGenericWithNull
-                    {
-                        throw new ArgumentNullException("value");
-                    }
-
-                    _value = value;
-                }
-
-                public T It
-                {
-                    get { return _value; }
-                }
-
-                public T ItOrDefault { get { return _value; } }
-                
-                public bool IsEmpty { get { return false; } }
-
-                public bool Exists { get { return true; } }
-
-                public T ItOrThrow(Exception exception)
-                {
-                    return It;
-                }
-                public T ItOrThrow(Func<Exception> exceptionCreator)
-                {
-                    return It;
-                }
-
-                public IFinalList<T> AsList()
-                {
-                    return FinalList.Create(_value);
-                }
-
-                private bool Equals(Existing<T> other)
-                {
-                    return Equals(_value, other._value);
-                }
-
-                public override bool Equals(object obj)
-                {
-                    if (ReferenceEquals(null, obj))
-                    {
-                        return false;
-                    }
-                    if (ReferenceEquals(this, obj))
-                    {
-                        return true;
-                    }
-                    return obj is Existing<T> && Equals((Existing<T>)obj);
-                }
-
-                public override int GetHashCode()
-                {
-                    return _value.GetHashCode();
-                }
-
-                public override string ToString()
-                {
-                    return string.Format("Existing {0}", _value);
-                }
+                throw new ArgumentNullException("existingValue");
             }
 
-            [DebuggerStepThrough]
-            // ReSharper disable MemberHidesStaticFromOuterClass
-            internal sealed class Empty<T> : IMaybe<T> 
-            // ReSharper restore MemberHidesStaticFromOuterClass
+            _exists = true;
+            _value = existingValue;
+        }
+
+        public bool IsEmpty { get { return !_exists; } }
+
+        public bool Exists { get { return _exists; } }
+
+        public T It
+        {
+            get
             {
-                public T It { get { throw new InvalidOperationException("Maybe-value is null."); } }
-
-                public T ItOrDefault { get { return default(T); } }
-
-                public bool IsEmpty { get { return true; } }
-
-                public bool Exists { get { return false; } }
-
-                public T ItOrThrow(Exception exception)
+                if (_exists)
                 {
-                    throw exception;
+                    return _value;
                 }
-
-                public T ItOrThrow(Func<Exception> exceptionCreator)
-                {
-                    throw exceptionCreator();
-                }
-
-                public IFinalList<T> AsList()
-                {
-                    return FinalList.Empty<T>();
-                }
-
-                public override bool Equals(object obj)
-                {
-                    if (ReferenceEquals(null, obj))
-                    {
-                        return false;
-                    }
-                    return obj is Empty<T>;
-                }
-
-                public override int GetHashCode()
-                {
-                    return 0;
-                }
-
-                public override string ToString()
-                {
-                    return string.Format("Empty");
-                }
+                throw new InvalidOperationException("Maybe-value is null.");
             }
+        }
+
+        public T ItOrDefault { get { return _exists ? _value : default(T); } }
+
+        public T ItOrThrow(Exception exception)
+        {
+            if (_exists)
+            {
+                return _value;
+            }
+
+            throw exception;
+        }
+
+        public T ItOrThrow(Func<Exception> exceptionCreator)
+        {
+            if (_exists)
+            {
+                return _value;
+            }
+
+            throw exceptionCreator();
+        }
+
+        public IFinalList<T> AsList()
+        {
+            return _exists ? FinalList.Create(_value) : FinalList.Empty<T>();
         }
     }
 }

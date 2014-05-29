@@ -19,7 +19,7 @@ namespace Belt.Maybe
         /// Returns the first item in the sequence wrapped in a <see cref="IMaybe{T}"/>, or an empty <see cref="IMaybe{T}"/> 
         /// if the sequence is empty.
         /// </summary>
-        public static IMaybe<T> FirstAsMaybe<T>(this IEnumerable<T> source)
+        public static Maybe<T> FirstAsMaybe<T>(this IEnumerable<T> source)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace Belt.Maybe
         /// Returns the first item in the sequence that matches the given predicate wrapped in a <see cref="IMaybe{T}"/>, 
         /// or an empty <see cref="IMaybe{T}"/>  if no item matches.
         /// </summary>
-        public static IMaybe<T> FirstAsMaybe<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+        public static Maybe<T> FirstAsMaybe<T>(this IEnumerable<T> source, Func<T, bool> predicate)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace Belt.Maybe
         /// thrown.
         /// </summary>
         /// <exception cref="InvalidOperationException">There was more than one item in the sequence.</exception>
-        public static IMaybe<T> SingleAsMaybe<T>(this IEnumerable<T> source)
+        public static Maybe<T> SingleAsMaybe<T>(this IEnumerable<T> source)
         {
             var firstTwo = source.Take(2).ToFinalList();
             return SingleAsMaybeCandidateToResult(firstTwo);
@@ -66,13 +66,13 @@ namespace Belt.Maybe
         /// thrown.
         /// </summary>
         /// <exception cref="InvalidOperationException">There was more than one matching item in the sequence.</exception>
-        public static IMaybe<T> SingleAsMaybe<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+        public static Maybe<T> SingleAsMaybe<T>(this IEnumerable<T> source, Func<T, bool> predicate)
         {
             var firstTwoMatching = source.Where(predicate).Take(2).ToFinalList();
             return SingleAsMaybeCandidateToResult(firstTwoMatching);
         }
 
-        private static IMaybe<T> SingleAsMaybeCandidateToResult<T>(IFinalList<T> firstTwo)
+        private static Maybe<T> SingleAsMaybeCandidateToResult<T>(IFinalList<T> firstTwo)
         {
             Guard.Precondition(firstTwo.Count <= 2);
 
@@ -97,10 +97,19 @@ namespace Belt.Maybe
         }
 
         /// <summary>
+        /// Reduces an <c>IEnumerable</c> of <see cref="IMaybe{T}"/> to an <see cref="IEnumerable{T}"/>, where
+        /// existing maybes from the original sequence are kept and empty ones are left out.
+        /// </summary>
+        public static IEnumerable<T> ExistingOnly<T>(this IEnumerable<Maybe<T>> source)
+        {
+            return ExistingOnly(source.Cast<IMaybe<T>>());
+        }
+
+        /// <summary>
         /// Looks up a key and returns the associated value wrapped in an <see cref="IMaybe{T}"/>,
         /// or an empty <see cref="IMaybe{T}"/> if the key doesn't exist.
         /// </summary>
-        public static IMaybe<TValue> Get<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key)
+        public static Maybe<TValue> Get<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key)
         {
             TValue value;
             var exists = source.TryGetValue(key, out value);
