@@ -1,6 +1,7 @@
 ﻿namespace BeltTest.Belt.Serialization.JsonNet
 {
     using System.Diagnostics;
+    using System.Dynamic;
 
     using global::Belt.Maybe;
     using global::Belt.Serialization.JsonNet;
@@ -55,6 +56,51 @@
             Assert.Equal(42, deserialized.TheMaybe.It);
         }
 
+        [Fact]
+        public void Empty_nested_maybe_roundtrips_successfully_to_json()
+        {
+            var testObj = new NestedType<InnerType> { TheMaybe = Maybe.Empty<InnerType>() };
+
+            var deserialized = PerformRoundtrip(testObj);
+
+            Assert.True(deserialized.TheMaybe.IsEmpty);
+        }
+
+        [Fact]
+        public void Existing_nested_maybe_roundtrips_successfully_to_json()
+        {
+            var testObj = new NestedType<InnerType> { TheMaybe = Maybe.Is(new InnerType { IntValue = 42, StringValue = "Heyo" }) };
+
+            var deserialized = PerformRoundtrip(testObj);
+
+            Assert.True(deserialized.TheMaybe.Exists);
+            Assert.Equal(42, deserialized.TheMaybe.It.IntValue);
+            Assert.Equal("Heyo", deserialized.TheMaybe.It.StringValue);
+        }
+
+        [Fact]
+        public void Empty_array_maybe_roundtrips_successfully_to_json()
+        {
+            var testObj = new NestedType<int[]> { TheMaybe = Maybe.Empty<int[]>() };
+
+            var deserialized = PerformRoundtrip(testObj);
+
+            Assert.True(deserialized.TheMaybe.IsEmpty);
+        }
+
+        [Fact]
+        public void Existing_array_maybe_roundtrips_successfully_to_json()
+        {
+            var testObj = new NestedType<int[]> { TheMaybe = Maybe.Is(new []{ 42, 43 }) };
+
+            var deserialized = PerformRoundtrip(testObj);
+
+            Assert.True(deserialized.TheMaybe.Exists);
+            Assert.Equal(2, deserialized.TheMaybe.It.Length);
+            Assert.Equal(42, deserialized.TheMaybe.It[0]);
+            Assert.Equal(43, deserialized.TheMaybe.It[1]);
+        }
+
         private T PerformRoundtrip<T>(T testObj)
         {
             var json = JsonConvert.SerializeObject(testObj, _jsonSerializerSettings);
@@ -72,6 +118,17 @@
         private class TestValueType
         {
             public IMaybe<int> TheMaybe { get; set; }
+        }
+
+        private class NestedType<T>
+        {
+            public IMaybe<T> TheMaybe { get; set; } 
+        }
+
+        private class InnerType
+        {
+            public int IntValue { get; set; }
+            public string StringValue { get; set; }
         }
     }
 }
