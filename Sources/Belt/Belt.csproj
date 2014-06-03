@@ -50,6 +50,9 @@
     <Compile Include="Equatable\EnumerableExtensions.cs" />
     <Compile Include="Equatable\EquatableSequenceWrapper.cs" />
     <Compile Include="Equatable\IValueBasedEquatable.cs" />
+    <Compile Include="Equatable\MemberwiseEqualityComparer.generated.cs" />
+    <Compile Include="Equatable\MemberwiseEqualityIgnoreAttribute.cs" />
+    <Compile Include="Equatable\MemberwiseEquatable.cs" />
     <Compile Include="Equatable\ValueBasedEquatable.cs" />
     <Compile Include="FinalList\FinalList.cs" />
     <Compile Include="FinalList\FinalListAdapter.cs" />
