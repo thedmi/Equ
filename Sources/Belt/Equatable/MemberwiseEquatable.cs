@@ -2,14 +2,14 @@
 {
     using System;
 
-    public abstract class MemberwiseEquatable<T> : IEquatable<T>
-        where T : class
+    public abstract class MemberwiseEquatable<TSelf> : IEquatable<TSelf>
+        where TSelf : class
     {
-        private static readonly MemberwiseEqualityComparer<T> _equalityComparer = new MemberwiseEqualityComparer<T>();
+        private static readonly MemberwiseEqualityComparer<TSelf> _equalityComparer = new MemberwiseEqualityComparer<TSelf>();
 
-        public bool Equals(T other)
+        public bool Equals(TSelf other)
         {
-            return _equalityComparer.Equals(this as T, other);
+            return _equalityComparer.Equals(this as TSelf, other);
         }
 
         public override bool Equals(object obj)
@@ -26,20 +26,20 @@
             {
                 return false;
             }
-            return Equals((T)obj);
+            return Equals((TSelf)obj);
         }
 
         public override int GetHashCode()
         {
-            return _equalityComparer.GetHashCode(this as T);
+            return _equalityComparer.GetHashCode(this as TSelf);
         }
 
-        public static bool operator ==(MemberwiseEquatable<T> left, MemberwiseEquatable<T> right)
+        public static bool operator ==(MemberwiseEquatable<TSelf> left, MemberwiseEquatable<TSelf> right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(MemberwiseEquatable<T> left, MemberwiseEquatable<T> right)
+        public static bool operator !=(MemberwiseEquatable<TSelf> left, MemberwiseEquatable<TSelf> right)
         {
             return !Equals(left, right);
         }
