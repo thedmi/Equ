@@ -42,6 +42,8 @@ namespace BeltTest.Belt
             Assert.False(x != y);
 
             Assert.Equal(x.GetHashCode(), y.GetHashCode());
+            Assert.Equal(3.GetHashCode(), new ReferenceValue(new TestValue(3)).GetHashCode());
+            Assert.Equal(0, new ReferenceValue(null).GetHashCode());
         }
 
         [Fact]
@@ -72,6 +74,18 @@ namespace BeltTest.Belt
             }
 
             protected override int EquatableValue { get { return _value; } }
+        }
+
+        private class ReferenceValue : ValueBasedEquatable<ReferenceValue, TestValue>
+        {
+            private readonly TestValue _value;
+
+            public ReferenceValue(TestValue value)
+            {
+                _value = value;
+            }
+
+            protected override TestValue EquatableValue { get { return _value; } }
         }
 
         private class TestSequenceValue : ValueBasedEquatable<TestSequenceValue, EquatableSequenceWrapper<TestValue>>
