@@ -1,4 +1,8 @@
 ﻿/*
+ * Copied and adapted from https://github.com/niik/MemberwiseEqualityComparer/blob/master/MemberwiseEqualityComparer.cs
+ */
+
+/*
  * Copyright (c) 2008-2009 Markus Olsson
  * var mail = string.Join(".", new string[] {"j", "markus", "olsson"}) + string.Concat('@', "gmail.com");
  * 
@@ -35,6 +39,7 @@ namespace Belt.Equatable
         private static readonly Func<T, T, bool> _equalityFunc;
         private static readonly Func<T, int> _hashCodeFunc;
 
+        // ReSharper disable once UnusedMember.Global
         public static new MemberwiseEqualityComparer<T> Default
         {
             get { return new MemberwiseEqualityComparer<T>(); }
@@ -115,19 +120,19 @@ namespace Belt.Equatable
             if (targetFieldMembers.Length == 0)
                 return x => 0;
 
-            var dynamicHashCodeMethod = new DynamicMethod("DynamicGetHashCode", typeof(int), new Type[] { targetType }, typeof(MemberwiseEqualityComparer<T>), true);
+            var dynamicHashCodeMethod = new DynamicMethod("DynamicGetHashCode", typeof(int), new[] { targetType }, typeof(MemberwiseEqualityComparer<T>), true);
 
-            ILGenerator il = dynamicHashCodeMethod.GetILGenerator();
+            var ilGenerator = dynamicHashCodeMethod.GetILGenerator();
 
             // Load a prime number as starting point.
-            il.Emit(OpCodes.Ldc_I4_7);
+            ilGenerator.Emit(OpCodes.Ldc_I4_7);
 
             var typeHistory = new HashSet<Type>();
 
             var equalityComparerGetters = new Dictionary<Type, MethodInfo>();
             var equalityComparerHashCodeMethods = new Dictionary<Type, MethodInfo>();
 
-            foreach (FieldInfo fi in targetFieldMembers)
+            foreach (var fi in targetFieldMembers)
             {
                 Type memberType = fi.FieldType;
 
@@ -138,15 +143,11 @@ namespace Belt.Equatable
                 {
                     typeHistory.Add(memberType);
 
-                    var equalityComparerType = typeof(IEnumerable).IsAssignableFrom(memberType) && memberType != typeof(string)
-                        ? typeof(ElementwiseSequenceEqualityComparer<>)
-                        : typeof(EqualityComparer<>);
-
-                    Type genericEqualityComparer = equalityComparerType.MakeGenericType(new Type[] { memberType });
+                    var genericEqualityComparer = GetEqualityComparer(memberType);
                     PropertyInfo defaultComparerProperty = genericEqualityComparer.GetProperty("Default", genericEqualityComparer);
 
                     defaultEqualityGetter = defaultComparerProperty.GetGetMethod();
-                    equalityComparerHashCodeMethod = genericEqualityComparer.GetMethod("GetHashCode", new Type[] { memberType });
+                    equalityComparerHashCodeMethod = genericEqualityComparer.GetMethod("GetHashCode", new[] { memberType });
 
                     equalityComparerGetters.Add(memberType, defaultEqualityGetter);
                     equalityComparerHashCodeMethods.Add(memberType, equalityComparerHashCodeMethod);
@@ -157,16 +158,16 @@ namespace Belt.Equatable
                     equalityComparerHashCodeMethod = equalityComparerHashCodeMethods[memberType];
                 }
 
-                il.EmitCall(OpCodes.Call, defaultEqualityGetter, null);
+                ilGenerator.EmitCall(OpCodes.Call, defaultEqualityGetter, null);
 
-                il.Emit(OpCodes.Ldarg_0);
-                il.Emit(OpCodes.Ldfld, fi);
+                ilGenerator.Emit(OpCodes.Ldarg_0);
+                ilGenerator.Emit(OpCodes.Ldfld, fi);
 
-                il.EmitCall(OpCodes.Callvirt, equalityComparerHashCodeMethod, null);
-                il.Emit(OpCodes.Xor);
+                ilGenerator.EmitCall(OpCodes.Callvirt, equalityComparerHashCodeMethod, null);
+                ilGenerator.Emit(OpCodes.Xor);
             }
 
-            il.Emit(OpCodes.Ret);
+            ilGenerator.Emit(OpCodes.Ret);
 
             return (Func<T, int>)dynamicHashCodeMethod.CreateDelegate(typeof(Func<T, int>));
         }
@@ -180,19 +181,19 @@ namespace Belt.Equatable
             if (targetFieldMembers.Length == 0)
                 return (x, y) => true;
 
-            var equalityMethod = new DynamicMethod("DynamicEquals", typeof(bool), new Type[] { targetType, targetType }, typeof(MemberwiseEqualityComparer<T>), true);
+            var equalityMethod = new DynamicMethod("DynamicEquals", typeof(bool), new[] { targetType, targetType }, typeof(MemberwiseEqualityComparer<T>), true);
 
-            ILGenerator il = equalityMethod.GetILGenerator();
-            Label notEqualLabel = il.DefineLabel();
+            var ilGenerator = equalityMethod.GetILGenerator();
+            var notEqualLabel = ilGenerator.DefineLabel();
 
             var typeHistory = new HashSet<Type>();
 
             var equalityComparerGetters = new Dictionary<Type, MethodInfo>();
             var concreteEqualsMethods = new Dictionary<Type, MethodInfo>();
 
-            MethodInfo referenceEquals = typeof(object).GetMethod("ReferenceEquals", new Type[] { typeof(object), typeof(object) });
+            var referenceEquals = typeof(object).GetMethod("ReferenceEquals", new[] { typeof(object), typeof(object) });
 
-            foreach (FieldInfo fi in targetFieldMembers)
+            foreach (var fi in targetFieldMembers)
             {
                 Type memberType = fi.FieldType;
 
@@ -203,15 +204,11 @@ namespace Belt.Equatable
                 {
                     typeHistory.Add(memberType);
 
-                    var equalityComparerType = typeof(IEnumerable).IsAssignableFrom(memberType) && memberType != typeof(string)
-                        ? typeof(ElementwiseSequenceEqualityComparer<>)
-                        : typeof(EqualityComparer<>);
-
-                    Type genericEqualityComparer = equalityComparerType.MakeGenericType(new Type[] { memberType });
-                    PropertyInfo defaultComparerProperty = genericEqualityComparer.GetProperty("Default", genericEqualityComparer);
+                    var genericEqualityComparer = GetEqualityComparer(memberType);
+                    var defaultComparerProperty = genericEqualityComparer.GetProperty("Default", genericEqualityComparer);
 
                     propertyGetMethod = defaultComparerProperty.GetGetMethod();
-                    concreteEqualsMethod = genericEqualityComparer.GetMethod("Equals", new Type[] { memberType, memberType });
+                    concreteEqualsMethod = genericEqualityComparer.GetMethod("Equals", new[] { memberType, memberType });
 
                     equalityComparerGetters.Add(memberType, propertyGetMethod);
                     concreteEqualsMethods.Add(memberType, concreteEqualsMethod);
@@ -222,44 +219,53 @@ namespace Belt.Equatable
                     concreteEqualsMethod = concreteEqualsMethods[memberType];
                 }
 
-                Label skip = il.DefineLabel();
+                var skip = ilGenerator.DefineLabel();
 
                 // Performance trick: Skip the real Equals() call on the EqualityProvider if where're dealing
                 // with the same object. Has the added benefit of making null comparisons really fast.
                 if (!memberType.IsValueType)
                 {
-                    il.Emit(OpCodes.Ldarg_0);
-                    il.Emit(OpCodes.Ldfld, fi);
+                    ilGenerator.Emit(OpCodes.Ldarg_0);
+                    ilGenerator.Emit(OpCodes.Ldfld, fi);
 
-                    il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Ldfld, fi);
+                    ilGenerator.Emit(OpCodes.Ldarg_1);
+                    ilGenerator.Emit(OpCodes.Ldfld, fi);
 
-                    il.EmitCall(OpCodes.Call, referenceEquals, null);
-                    il.Emit(OpCodes.Brtrue, skip);
+                    ilGenerator.EmitCall(OpCodes.Call, referenceEquals, null);
+                    ilGenerator.Emit(OpCodes.Brtrue, skip);
                 }
 
-                il.EmitCall(OpCodes.Call, propertyGetMethod, null);
+                ilGenerator.EmitCall(OpCodes.Call, propertyGetMethod, null);
 
-                il.Emit(OpCodes.Ldarg_0);
-                il.Emit(OpCodes.Ldfld, fi);
+                ilGenerator.Emit(OpCodes.Ldarg_0);
+                ilGenerator.Emit(OpCodes.Ldfld, fi);
 
-                il.Emit(OpCodes.Ldarg_1);
-                il.Emit(OpCodes.Ldfld, fi);
+                ilGenerator.Emit(OpCodes.Ldarg_1);
+                ilGenerator.Emit(OpCodes.Ldfld, fi);
 
-                il.EmitCall(OpCodes.Callvirt, concreteEqualsMethod, null);
-                il.Emit(OpCodes.Brfalse, notEqualLabel);
+                ilGenerator.EmitCall(OpCodes.Callvirt, concreteEqualsMethod, null);
+                ilGenerator.Emit(OpCodes.Brfalse, notEqualLabel);
 
-                il.MarkLabel(skip);
+                ilGenerator.MarkLabel(skip);
             }
 
-            il.Emit(OpCodes.Ldc_I4_1);
-            il.Emit(OpCodes.Ret);
+            ilGenerator.Emit(OpCodes.Ldc_I4_1);
+            ilGenerator.Emit(OpCodes.Ret);
 
-            il.MarkLabel(notEqualLabel);
-            il.Emit(OpCodes.Ldc_I4_0);
-            il.Emit(OpCodes.Ret);
+            ilGenerator.MarkLabel(notEqualLabel);
+            ilGenerator.Emit(OpCodes.Ldc_I4_0);
+            ilGenerator.Emit(OpCodes.Ret);
 
             return (Func<T, T, bool>)equalityMethod.CreateDelegate(typeof(Func<T, T, bool>));
+        }
+
+        private static Type GetEqualityComparer(Type memberType)
+        {
+            var equalityComparerType = typeof(IEnumerable).IsAssignableFrom(memberType) && memberType != typeof(string)
+                ? typeof(ElementwiseSequenceEqualityComparer<>)
+                : typeof(EqualityComparer<>);
+
+            return equalityComparerType.MakeGenericType(new[] { memberType });
         }
     }
 }

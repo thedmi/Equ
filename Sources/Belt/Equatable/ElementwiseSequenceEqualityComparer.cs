@@ -4,10 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Belt.Guard;
-
     public class ElementwiseSequenceEqualityComparer<T> : EqualityComparer<T> where T : IEnumerable
     {
+        // ReSharper disable once UnusedMember.Global
         public static new ElementwiseSequenceEqualityComparer<T> Default
         {
             get { return new ElementwiseSequenceEqualityComparer<T>(); }
