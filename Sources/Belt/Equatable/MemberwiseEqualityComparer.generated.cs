@@ -21,6 +21,7 @@
 namespace Belt.Equatable
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -33,6 +34,11 @@ namespace Belt.Equatable
     {
         private static readonly Func<T, T, bool> _equalityFunc;
         private static readonly Func<T, int> _hashCodeFunc;
+
+        public static new MemberwiseEqualityComparer<T> Default
+        {
+            get { return new MemberwiseEqualityComparer<T>(); }
+        }
 
         static MemberwiseEqualityComparer()
         {
@@ -132,7 +138,11 @@ namespace Belt.Equatable
                 {
                     typeHistory.Add(memberType);
 
-                    Type genericEqualityComparer = typeof(EqualityComparer<>).MakeGenericType(new Type[] { memberType });
+                    var equalityComparerType = typeof(IEnumerable).IsAssignableFrom(memberType) && memberType != typeof(string)
+                        ? typeof(ElementwiseSequenceEqualityComparer<>)
+                        : typeof(EqualityComparer<>);
+
+                    Type genericEqualityComparer = equalityComparerType.MakeGenericType(new Type[] { memberType });
                     PropertyInfo defaultComparerProperty = genericEqualityComparer.GetProperty("Default", genericEqualityComparer);
 
                     defaultEqualityGetter = defaultComparerProperty.GetGetMethod();
@@ -193,7 +203,11 @@ namespace Belt.Equatable
                 {
                     typeHistory.Add(memberType);
 
-                    Type genericEqualityComparer = typeof(EqualityComparer<>).MakeGenericType(new Type[] { memberType });
+                    var equalityComparerType = typeof(IEnumerable).IsAssignableFrom(memberType) && memberType != typeof(string)
+                        ? typeof(ElementwiseSequenceEqualityComparer<>)
+                        : typeof(EqualityComparer<>);
+
+                    Type genericEqualityComparer = equalityComparerType.MakeGenericType(new Type[] { memberType });
                     PropertyInfo defaultComparerProperty = genericEqualityComparer.GetProperty("Default", genericEqualityComparer);
 
                     propertyGetMethod = defaultComparerProperty.GetGetMethod();

@@ -1,6 +1,7 @@
 ﻿namespace BeltTest.Belt
 {
     using global::Belt.Equatable;
+    using global::Belt.FinalList;
 
     using Xunit;
 
@@ -53,6 +54,20 @@
             Assert.NotEqual(x.GetHashCode(), y.GetHashCode());
         }
 
+        [Fact]
+        public void Sequences_are_compared_element_by_element()
+        {
+            var x = new ValueTypeWithSequence(FinalList.Create(new ValueType2("a"), new ValueType2("b")));
+            var y = new ValueTypeWithSequence(FinalList.Create(new ValueType2("a"), new ValueType2("b")));
+
+            Assert.True(x.Equals(y));
+            Assert.True(y.Equals(x));
+            Assert.True(x == y);
+            Assert.False(x != y);
+
+            Assert.Equal(x.GetHashCode(), y.GetHashCode());
+        }
+
         // TODO Add sequence equality tests
 
         // ReSharper disable NotAccessedField.Local
@@ -96,6 +111,16 @@
             public CustomRefType(string s)
             {
                 _s = s;
+            }
+        }
+
+        private class ValueTypeWithSequence : MemberwiseEquatable<ValueTypeWithSequence>
+        {
+            private IFinalList<ValueType2> _values;
+
+            public ValueTypeWithSequence(IFinalList<ValueType2> values)
+            {
+                _values = values;
             }
         }
         // ReSharper restore NotAccessedField.Local
