@@ -68,6 +68,20 @@
             Assert.Equal(x.GetHashCode(), y.GetHashCode());
         }
 
+        [Fact]
+        public void Null_values_do_not_throw_exceptions_in_equals_and_getHashCode()
+        {
+            var x = new ValueType("asdf", 42, true, null, new ValueType2("xyz"));
+            var y = new ValueType("asdf", 42, true, null, new ValueType2("xyz"));
+
+            Assert.True(x.Equals(y));
+            Assert.True(y.Equals(x));
+            Assert.True(x == y);
+            Assert.False(x != y);
+
+            Assert.Equal(x.GetHashCode(), y.GetHashCode());
+        }
+
         // TODO Add sequence equality tests
 
         // ReSharper disable NotAccessedField.Local
