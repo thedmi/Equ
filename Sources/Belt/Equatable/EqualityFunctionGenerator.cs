@@ -10,14 +10,7 @@ namespace Belt.Equatable
     public static class EqualityFunctionGenerator
     {
         private static readonly MethodInfo _objectEqualsMethod = typeof(object).GetMethod("Equals", BindingFlags.Static | BindingFlags.Public);
-
-        private static IEnumerable<FieldInfo> GetIncludedMembers(Type type)
-        {
-            return
-                type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(fi => fi.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Length == 0);
-        }
-
+        
         public static Func<object, int> MakeGetHashCodeMethod(Type type)
         {
             var objRaw = Expression.Parameter(typeof(object), "obj");
@@ -55,6 +48,13 @@ namespace Belt.Equatable
             return Expression.Lambda<Func<object, object, bool>>(useTypedEqualsExpression, leftRaw, rightRaw).Compile();
         }
 
+        private static IEnumerable<FieldInfo> GetIncludedMembers(Type type)
+        {
+            return
+                type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(fi => fi.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Length == 0);
+        }
+
         private static Expression MakeEqualsExpression(FieldInfo field, Expression left, Expression right)
         {
             var leftField = Expression.Field(left, field);
@@ -66,9 +66,9 @@ namespace Belt.Equatable
             {
                 return MakeValueTypeEqualExpression(leftField, rightField);
             }
-            if (fieldType.IsAssignableFrom(typeof(IEnumerable)) && fieldType != typeof(string))
+            if (IsSequenceType(fieldType))
             {
-                return MakeSequenceTypeEqualExpression(leftField, rightField);
+                return MakeSequenceTypeEqualExpression(leftField, rightField, fieldType);
             }
             return MakeReferenceTypeEqualExpression(leftField, rightField);
         }
@@ -78,10 +78,14 @@ namespace Belt.Equatable
             return Expression.Equal(left, right);
         }
 
-        private static Expression MakeSequenceTypeEqualExpression(Expression left, Expression right)
+        private static Expression MakeSequenceTypeEqualExpression(Expression left, Expression right, Type enumerableType)
         {
-            // TODO Implement by element sequence comparison
-            return MakeReferenceTypeEqualExpression(left, right);
+            var comparerType = typeof(ElementwiseSequenceEqualityComparer<>).MakeGenericType(enumerableType);
+            var comparerInstance = comparerType.GetProperty("Default", BindingFlags.Static | BindingFlags.Public).GetValue(null);
+
+            var comparerExpr = Expression.Constant(comparerInstance);
+
+            return Expression.Call(comparerExpr, "Equals", Type.EmptyTypes, left, right);
         }
 
         private static Expression MakeReferenceTypeEqualExpression(Expression left, Expression right)
@@ -89,9 +93,25 @@ namespace Belt.Equatable
             return Expression.Call(_objectEqualsMethod, left, right);
         }
 
-        private static Expression MakeGetHashCodeExpression(FieldInfo field, UnaryExpression xParam)
+        private static Expression MakeGetHashCodeExpression(FieldInfo field, UnaryExpression obj)
         {
-            return Expression.Call(Expression.Field(xParam, field), "GetHashCode", Type.EmptyTypes);
+            if (IsSequenceType(field.FieldType))
+            {
+                var enumerableType = field.FieldType;
+
+                var comparerType = typeof(ElementwiseSequenceEqualityComparer<>).MakeGenericType(enumerableType);
+                var comparerInstance = comparerType.GetProperty("Default", BindingFlags.Static | BindingFlags.Public).GetValue(null);
+
+                var comparerExpr = Expression.Constant(comparerInstance);
+
+                return Expression.Call(comparerExpr, "GetHashCode", Type.EmptyTypes, Expression.Field(obj, field));
+            }
+            return Expression.Call(Expression.Field(obj, field), "GetHashCode", Type.EmptyTypes);
+        }
+
+        private static bool IsSequenceType(Type type)
+        {
+            return typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string);
         }
     }
 }
