@@ -56,14 +56,6 @@ namespace BeltTest.Belt
             Assert.True(seq1 == seq2);
         }
 
-        [Fact]
-        public void EqualityBasedSequencesConvertToStringAsArray()
-        {
-            var seq = new TestSequenceValue(new[] { new TestValue(1), new TestValue(2) });
-
-            Assert.Equal("[ 1, 2 ]", seq.ToString());
-        }
-
         private class TestValue : ValueBasedEquatable<TestValue, int>
         {
             private readonly int _value;
@@ -88,7 +80,7 @@ namespace BeltTest.Belt
             protected override TestValue EquatableValue { get { return _value; } }
         }
 
-        private class TestSequenceValue : ValueBasedEquatable<TestSequenceValue, EquatableSequenceWrapper<TestValue>>
+        private class TestSequenceValue : ValueBasedEquatable<TestSequenceValue, IEnumerable<TestValue>>
         {
             private readonly IEnumerable<TestValue> _values;
 
@@ -97,7 +89,7 @@ namespace BeltTest.Belt
                 _values = values;
             }
 
-            protected override EquatableSequenceWrapper<TestValue> EquatableValue { get { return _values.AsEquatableSequence(); } }
+            protected override IEnumerable<TestValue> EquatableValue { get { return _values; } }
         }
     }
 }

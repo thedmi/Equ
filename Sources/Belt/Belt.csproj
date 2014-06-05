@@ -48,9 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Equatable\ElementwiseSequenceEqualityComparer.cs" />
-    <Compile Include="Equatable\EnumerableExtensions.cs" />
     <Compile Include="Equatable\EqualityFunctionGenerator.cs" />
-    <Compile Include="Equatable\EquatableSequenceWrapper.cs" />
     <Compile Include="Equatable\IValueBasedEquatable.cs" />
     <Compile Include="Equatable\MemberwiseEqualityComparer.cs" />
     <Compile Include="Equatable\MemberwiseEqualityIgnoreAttribute.cs" />

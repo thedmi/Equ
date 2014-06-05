@@ -10,6 +10,8 @@ namespace Belt.Equatable
 
     public abstract class ValueBasedEquatable<TSelf, TValue> : IEquatable<ValueBasedEquatable<TSelf, TValue>>, IValueBasedEquatable<TValue>
     {
+        private static readonly MemberwiseEqualityComparer<TValue> _equalityComparer = new MemberwiseEqualityComparer<TValue>();
+
         protected abstract TValue EquatableValue { get; }
 
         public bool Equals(ValueBasedEquatable<TSelf, TValue> other)
@@ -22,7 +24,7 @@ namespace Belt.Equatable
             {
                 return true;
             }
-            return Equals(EquatableValue, other.EquatableValue);
+            return _equalityComparer.Equals(EquatableValue, other.EquatableValue);
         }
 
         public override bool Equals(object obj)
@@ -44,7 +46,7 @@ namespace Belt.Equatable
 
         public override int GetHashCode()
         {
-            return ReferenceEquals(EquatableValue, null) ? 0 : EquatableValue.GetHashCode();
+            return ReferenceEquals(EquatableValue, null) ? 0 : _equalityComparer.GetHashCode(EquatableValue);
         }
 
         public static bool operator ==(ValueBasedEquatable<TSelf, TValue> id1, ValueBasedEquatable<TSelf, TValue> id2)
