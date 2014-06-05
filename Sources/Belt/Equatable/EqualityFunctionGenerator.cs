@@ -80,12 +80,7 @@ namespace Belt.Equatable
 
         private static Expression MakeSequenceTypeEqualExpression(Expression left, Expression right, Type enumerableType)
         {
-            var comparerType = typeof(ElementwiseSequenceEqualityComparer<>).MakeGenericType(enumerableType);
-            var comparerInstance = comparerType.GetProperty("Default", BindingFlags.Static | BindingFlags.Public).GetValue(null);
-
-            var comparerExpr = Expression.Constant(comparerInstance);
-
-            return Expression.Call(comparerExpr, "Equals", Type.EmptyTypes, left, right);
+            return MakeCallOnSequenceEqualityComparerExpression("Equals", enumerableType, left, right);
         }
 
         private static Expression MakeReferenceTypeEqualExpression(Expression left, Expression right)
@@ -95,18 +90,20 @@ namespace Belt.Equatable
 
         private static Expression MakeGetHashCodeExpression(FieldInfo field, UnaryExpression obj)
         {
-            if (IsSequenceType(field.FieldType))
-            {
-                var enumerableType = field.FieldType;
+            var fieldExpr = Expression.Field(obj, field);
 
-                var comparerType = typeof(ElementwiseSequenceEqualityComparer<>).MakeGenericType(enumerableType);
-                var comparerInstance = comparerType.GetProperty("Default", BindingFlags.Static | BindingFlags.Public).GetValue(null);
+            return IsSequenceType(field.FieldType)
+                ? MakeCallOnSequenceEqualityComparerExpression("GetHashCode", field.FieldType, fieldExpr)
+                : Expression.Call(fieldExpr, "GetHashCode", Type.EmptyTypes);
+        }
 
-                var comparerExpr = Expression.Constant(comparerInstance);
+        private static Expression MakeCallOnSequenceEqualityComparerExpression(string methodName, Type enumerableType, params Expression[] parameterExpressions)
+        {
+            var comparerType = typeof(ElementwiseSequenceEqualityComparer<>).MakeGenericType(enumerableType);
+            var comparerInstance = comparerType.GetProperty("Default", BindingFlags.Static | BindingFlags.Public).GetValue(null);
+            var comparerExpr = Expression.Constant(comparerInstance);
 
-                return Expression.Call(comparerExpr, "GetHashCode", Type.EmptyTypes, Expression.Field(obj, field));
-            }
-            return Expression.Call(Expression.Field(obj, field), "GetHashCode", Type.EmptyTypes);
+            return Expression.Call(comparerExpr, methodName, Type.EmptyTypes, parameterExpressions);
         }
 
         private static bool IsSequenceType(Type type)
