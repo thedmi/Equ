@@ -20,7 +20,7 @@ namespace Belt.Equatable
 
             // compound XOr expression
             var getHashCodeExprs = GetIncludedMembers(type).Select(p => MakeGetHashCodeExpression(p, objParam));
-            var xorChainExpr = getHashCodeExprs.Aggregate((Expression)Expression.Constant(0), Expression.ExclusiveOr);
+            var xorChainExpr = getHashCodeExprs.Aggregate((Expression)Expression.Constant(29), LinkHashCodeExpression);
             
             return Expression.Lambda<Func<object, int>>(xorChainExpr, objRaw).Compile();
         }
@@ -53,6 +53,12 @@ namespace Belt.Equatable
             return
                 type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                     .Where(fi => fi.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Length == 0);
+        }
+
+        private static Expression LinkHashCodeExpression(Expression left, Expression right)
+        {
+            var leftMultiplied = Expression.Multiply(left, Expression.Constant(486187739));
+            return Expression.ExclusiveOr(leftMultiplied, right);
         }
 
         private static Expression MakeEqualsExpression(FieldInfo field, Expression left, Expression right)
@@ -92,9 +98,14 @@ namespace Belt.Equatable
         {
             var fieldExpr = Expression.Field(obj, field);
 
-            return IsSequenceType(field.FieldType)
+            var getHashCodeExpr = IsSequenceType(field.FieldType)
                 ? MakeCallOnSequenceEqualityComparerExpression("GetHashCode", field.FieldType, fieldExpr)
                 : Expression.Call(fieldExpr, "GetHashCode", Type.EmptyTypes);
+
+            return Expression.Condition(
+                Expression.ReferenceEqual(Expression.Constant(null), Expression.Convert(fieldExpr, typeof(object))), // If field is null
+                Expression.Constant(0), // Return 0
+                getHashCodeExpr); // Return the actual getHashCode call
         }
 
         private static Expression MakeCallOnSequenceEqualityComparerExpression(string methodName, Type enumerableType, params Expression[] parameterExpressions)

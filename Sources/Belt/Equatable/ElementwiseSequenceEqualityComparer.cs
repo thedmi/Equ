@@ -24,7 +24,7 @@
         {
             var enumerable = (IEnumerable<object>)obj;
 
-            return enumerable == null ? 0 : enumerable.Aggregate(0, (current, o) => current ^ o.GetHashCode());
+            return enumerable == null ? 0 : enumerable.Aggregate(17, (current, o) => current ^ o.GetHashCode());
         }
     }
 }

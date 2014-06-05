@@ -42,7 +42,7 @@ namespace BeltTest.Belt
             Assert.False(x != y);
 
             Assert.Equal(x.GetHashCode(), y.GetHashCode());
-            Assert.Equal(3.GetHashCode(), new ReferenceValue(new TestValue(3)).GetHashCode());
+            Assert.Equal(new ReferenceValue(new TestValue(3)).GetHashCode(), new ReferenceValue(new TestValue(3)).GetHashCode());
             Assert.Equal(0, new ReferenceValue(null).GetHashCode());
         }
 
