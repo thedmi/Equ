@@ -5,7 +5,7 @@
     public abstract class MemberwiseEquatable<TSelf> : IEquatable<TSelf>
         where TSelf : class
     {
-        private static readonly MemberwiseEqualityComparer<TSelf> _equalityComparer = new MemberwiseEqualityComparer<TSelf>();
+        private static readonly MemberwiseEqualityComparer<TSelf> _equalityComparer = MemberwiseEqualityComparer<TSelf>.ByFields;
 
         public bool Equals(TSelf other)
         {

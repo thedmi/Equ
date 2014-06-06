@@ -6,55 +6,67 @@ namespace Belt.Equatable
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
-
-    using Fasterflect;
-
-    public static class EqualityFunctionGenerator
+    
+    public class EqualityFunctionGenerator
     {
         private static readonly MethodInfo _objectEqualsMethod = typeof(object).GetMethod("Equals", BindingFlags.Static | BindingFlags.Public);
-        
-        public static Func<object, int> MakeGetHashCodeMethod(Type type)
+
+        private readonly Type _type;
+
+        private readonly Func<Type, IEnumerable<FieldInfo>> _fieldSelector;
+
+        private readonly Func<Type, IEnumerable<PropertyInfo>> _propertySelector;
+
+        public EqualityFunctionGenerator(Type type, Func<Type, IEnumerable<FieldInfo>> fieldSelector, Func<Type, IEnumerable<PropertyInfo>> propertySelector)
+        {
+            _type = type;
+            _fieldSelector = fieldSelector;
+            _propertySelector = propertySelector;
+        }
+
+        public Func<object, int> MakeGetHashCodeMethod()
         {
             var objRaw = Expression.Parameter(typeof(object), "obj");
 
             // cast to the subclass type
-            var objParam = Expression.Convert(objRaw, type);
+            var objParam = Expression.Convert(objRaw, _type);
 
             // compound XOr expression
-            var getHashCodeExprs = GetIncludedMembers(type).Select(p => MakeGetHashCodeExpression(p, p.FieldType, objParam));
+            var getHashCodeExprs = GetIncludedMembers(_type).Select(p => MakeGetHashCodeExpression(p.Item1, p.Item2, objParam));
             var xorChainExpr = getHashCodeExprs.Aggregate((Expression)Expression.Constant(29), LinkHashCodeExpression);
             
             return Expression.Lambda<Func<object, int>>(xorChainExpr, objRaw).Compile();
         }
 
-        public static Func<object, object, bool> MakeEqualsMethod(Type type)
+        public Func<object, object, bool> MakeEqualsMethod()
         {
             var leftRaw = Expression.Parameter(typeof(object), "left");
             var rightRaw = Expression.Parameter(typeof(object), "right");
 
             // cast to the subclass type
-            var leftParam = Expression.Convert(leftRaw, type);
-            var rightParam = Expression.Convert(rightRaw, type);
+            var leftParam = Expression.Convert(leftRaw, _type);
+            var rightParam = Expression.Convert(rightRaw, _type);
 
             // compound AND expression using short-circuit evaluation
-            var equalsExprs = GetIncludedMembers(type).Select(p => MakeEqualsExpression(p, p.FieldType, leftParam, rightParam));
+            var equalsExprs = GetIncludedMembers(_type).Select(p => MakeEqualsExpression(p.Item1, p.Item2, leftParam, rightParam));
             var andChainExpr = equalsExprs.Aggregate((Expression)Expression.Constant(true), Expression.AndAlso);
 
             // call Object.Equals if second parameter doesn't match type
             var objectEqualsExpr = Expression.Equal(leftRaw, rightRaw);
             var useTypedEqualsExpression = Expression.Condition(
-                Expression.TypeIs(rightRaw, type),
+                Expression.TypeIs(rightRaw, _type),
                 andChainExpr,
                 objectEqualsExpr);
 
             return Expression.Lambda<Func<object, object, bool>>(useTypedEqualsExpression, leftRaw, rightRaw).Compile();
         }
 
-        private static IEnumerable<FieldInfo> GetIncludedMembers(Type type)
+        private IEnumerable<Tuple<MemberInfo, Type>> GetIncludedMembers(Type type)
         {
-            return
-                type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(fi => fi.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Length == 0);
+            var selectedFields = _fieldSelector(type).Select(f => Tuple.Create((MemberInfo)f, f.FieldType));
+            var selectedProperties = _propertySelector(type).Select(f => Tuple.Create((MemberInfo)f, f.PropertyType));
+
+            return selectedFields.Concat(selectedProperties);
         }
 
         private static Expression LinkHashCodeExpression(Expression left, Expression right)

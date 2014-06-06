@@ -10,7 +10,7 @@ namespace Belt.Equatable
 
     public abstract class ValueBasedEquatable<TSelf, TValue> : IEquatable<ValueBasedEquatable<TSelf, TValue>>, IValueBasedEquatable<TValue>
     {
-        private static readonly MemberwiseEqualityComparer<TValue> _equalityComparer = new MemberwiseEqualityComparer<TValue>();
+        private static readonly MemberwiseEqualityComparer<TValue> _equalityComparer = MemberwiseEqualityComparer<TValue>.ByFields;
 
         protected abstract TValue EquatableValue { get; }
 
