@@ -12,19 +12,38 @@
             get { return new ElementwiseSequenceEqualityComparer<T>(); }
         }
 
-        public override bool Equals(T x, T y)
+        public override bool Equals(T xs, T ys)
         {
-            var ex = (IEnumerable<object>)x;
-            var ey = (IEnumerable<object>)y;
+            if (ReferenceEquals(xs, ys))
+            {
+                return true;
+            }
+            if (ReferenceEquals(null, xs))
+            {
+                return false;
+            }
+            if (ReferenceEquals(null, ys))
+            {
+                return false;
+            }
+
+            var ex = xs.Cast<object>();
+            var ey = ys.Cast<object>();
 
             return ex.SequenceEqual(ey);
         }
 
         public override int GetHashCode(T obj)
         {
-            var enumerable = (IEnumerable<object>)obj;
+            if (ReferenceEquals(null, obj))
+            {
+                return 0;
+            }
 
-            return enumerable == null ? 0 : enumerable.Aggregate(17, (current, o) => current ^ o.GetHashCode());
+            unchecked
+            {
+                return obj.Cast<object>().Aggregate(17, (current, o) => (current * 486187739) ^ o.GetHashCode());
+            }
         }
     }
 }

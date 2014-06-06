@@ -97,6 +97,20 @@
             Assert.Equal(ints.Count, new HashSet<ValueType3>(objs).Count);
         }
 
+        [Fact]
+        public void Dictionary_members_are_used_correctly_for_equality_comparison()
+        {
+            var x = new DictionaryType(new Dictionary<string, string> { { "a", "The A" }, { "b", "The B" } });
+            var y = new DictionaryType(new Dictionary<string, string> { { "a", "The A" }, { "b", "The B" } });
+
+            Assert.True(x.Equals(y));
+            Assert.True(y.Equals(x));
+            Assert.True(x == y);
+            Assert.False(x != y);
+
+            Assert.Equal(x.GetHashCode(), y.GetHashCode());
+        }
+
         // TODO Add sequence equality tests
 
         // ReSharper disable NotAccessedField.Local
@@ -145,6 +159,16 @@
             public int Value { get { return _value; } }
 
             protected override string EquatableValue { get { return Convert.ToString(_value); } }
+        }
+
+        private class DictionaryType : MemberwiseEquatable<DictionaryType>
+        {
+            private readonly IDictionary<string, string> _dict = new Dictionary<string, string>();
+
+            public DictionaryType(IDictionary<string, string> dict)
+            {
+                _dict = dict;
+            }
         }
 
         private class CustomRefType
