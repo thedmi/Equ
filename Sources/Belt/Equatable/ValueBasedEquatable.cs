@@ -10,7 +10,8 @@ namespace Belt.Equatable
 
     public abstract class ValueBasedEquatable<TSelf, TValue> : IEquatable<ValueBasedEquatable<TSelf, TValue>>, IValueBasedEquatable<TValue>
     {
-        private static readonly MemberwiseEqualityComparer<TValue> _equalityComparer = MemberwiseEqualityComparer<TValue>.ByFields;
+        // TODO This is a problem when TValue is e.g. a string
+        private static readonly MemberwiseEqualityComparer<Tuple<TValue>> _equalityComparer = MemberwiseEqualityComparer<Tuple<TValue>>.ByFields;
 
         protected abstract TValue EquatableValue { get; }
 
@@ -24,7 +25,7 @@ namespace Belt.Equatable
             {
                 return true;
             }
-            return _equalityComparer.Equals(EquatableValue, other.EquatableValue);
+            return _equalityComparer.Equals(Tuple.Create(EquatableValue), Tuple.Create(other.EquatableValue));
         }
 
         public override bool Equals(object obj)
@@ -46,7 +47,7 @@ namespace Belt.Equatable
 
         public override int GetHashCode()
         {
-            return ReferenceEquals(EquatableValue, null) ? 0 : _equalityComparer.GetHashCode(EquatableValue);
+            return ReferenceEquals(EquatableValue, null) ? 0 : _equalityComparer.GetHashCode(Tuple.Create(EquatableValue));
         }
 
         public static bool operator ==(ValueBasedEquatable<TSelf, TValue> id1, ValueBasedEquatable<TSelf, TValue> id2)

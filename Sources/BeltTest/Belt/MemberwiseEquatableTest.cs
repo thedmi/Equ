@@ -1,5 +1,11 @@
 ﻿namespace BeltTest.Belt
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Linq;
+
     using global::Belt.Equatable;
     using global::Belt.FinalList;
 
@@ -82,6 +88,15 @@
             Assert.Equal(x.GetHashCode(), y.GetHashCode());
         }
 
+        [Fact]
+        public void Hash_codes_distribute()
+        {
+            var ints = Enumerable.Range(0, 40).ToFinalList();
+            var objs = ints.Select(i => new ValueType3(i)).ToFinalList();
+            
+            Assert.Equal(ints.Count, new HashSet<ValueType3>(objs).Count);
+        }
+
         // TODO Add sequence equality tests
 
         // ReSharper disable NotAccessedField.Local
@@ -116,6 +131,20 @@
             {
                 _s = s;
             }
+        }
+
+        private class ValueType3 : ValueBasedEquatable<ValueType3, string>
+        {
+            private readonly int _value;
+
+            public ValueType3(int value)
+            {
+                _value = value;
+            }
+
+            public int Value { get { return _value; } }
+
+            protected override string EquatableValue { get { return Convert.ToString(_value); } }
         }
 
         private class CustomRefType
