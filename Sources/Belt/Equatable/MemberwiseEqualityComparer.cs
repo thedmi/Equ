@@ -9,9 +9,9 @@
     /// </summary>
     public class MemberwiseEqualityComparer<T> : IEqualityComparer<T>
     {
-        private static readonly Func<object, object, bool> _equalsFunc = EqualityFunctionGenerator.MakeEqualsMethod(typeof(T));
+        private readonly Func<object, object, bool> _equalsFunc = EqualityFunctionGenerator.MakeEqualsMethod(typeof(T));
 
-        private static readonly Func<object, int> _getHashCodeFunc = EqualityFunctionGenerator.MakeGetHashCodeMethod(typeof(T));
+        private readonly Func<object, int> _getHashCodeFunc = EqualityFunctionGenerator.MakeGetHashCodeMethod(typeof(T));
         
         public bool Equals(T x, T y)
         {

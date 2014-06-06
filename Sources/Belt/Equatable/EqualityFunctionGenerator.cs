@@ -7,6 +7,8 @@ namespace Belt.Equatable
     using System.Linq.Expressions;
     using System.Reflection;
 
+    using Fasterflect;
+
     public static class EqualityFunctionGenerator
     {
         private static readonly MethodInfo _objectEqualsMethod = typeof(object).GetMethod("Equals", BindingFlags.Static | BindingFlags.Public);
@@ -19,7 +21,7 @@ namespace Belt.Equatable
             var objParam = Expression.Convert(objRaw, type);
 
             // compound XOr expression
-            var getHashCodeExprs = GetIncludedMembers(type).Select(p => MakeGetHashCodeExpression(p, objParam));
+            var getHashCodeExprs = GetIncludedMembers(type).Select(p => MakeGetHashCodeExpression(p, p.FieldType, objParam));
             var xorChainExpr = getHashCodeExprs.Aggregate((Expression)Expression.Constant(29), LinkHashCodeExpression);
             
             return Expression.Lambda<Func<object, int>>(xorChainExpr, objRaw).Compile();
@@ -35,7 +37,7 @@ namespace Belt.Equatable
             var rightParam = Expression.Convert(rightRaw, type);
 
             // compound AND expression using short-circuit evaluation
-            var equalsExprs = GetIncludedMembers(type).Select(p => MakeEqualsExpression(p, leftParam, rightParam));
+            var equalsExprs = GetIncludedMembers(type).Select(p => MakeEqualsExpression(p, p.FieldType, leftParam, rightParam));
             var andChainExpr = equalsExprs.Aggregate((Expression)Expression.Constant(true), Expression.AndAlso);
 
             // call Object.Equals if second parameter doesn't match type
@@ -61,22 +63,20 @@ namespace Belt.Equatable
             return Expression.ExclusiveOr(leftMultiplied, right);
         }
 
-        private static Expression MakeEqualsExpression(FieldInfo field, Expression left, Expression right)
+        private static Expression MakeEqualsExpression(MemberInfo member, Type memberType, Expression left, Expression right)
         {
-            var leftField = Expression.Field(left, field);
-            var rightField = Expression.Field(right, field);
+            var leftMemberExpr = Expression.MakeMemberAccess(left, member);
+            var rightMemberExpr = Expression.MakeMemberAccess(right, member);
 
-            var fieldType = field.FieldType;
-
-            if (fieldType.IsValueType)
+            if (memberType.IsValueType)
             {
-                return MakeValueTypeEqualExpression(leftField, rightField);
+                return MakeValueTypeEqualExpression(leftMemberExpr, rightMemberExpr);
             }
-            if (IsSequenceType(fieldType))
+            if (IsSequenceType(memberType))
             {
-                return MakeSequenceTypeEqualExpression(leftField, rightField, fieldType);
+                return MakeSequenceTypeEqualExpression(leftMemberExpr, rightMemberExpr, memberType);
             }
-            return MakeReferenceTypeEqualExpression(leftField, rightField);
+            return MakeReferenceTypeEqualExpression(leftMemberExpr, rightMemberExpr);
         }
 
         private static Expression MakeValueTypeEqualExpression(Expression left, Expression right)
@@ -94,16 +94,16 @@ namespace Belt.Equatable
             return Expression.Call(_objectEqualsMethod, left, right);
         }
 
-        private static Expression MakeGetHashCodeExpression(FieldInfo field, UnaryExpression obj)
+        private static Expression MakeGetHashCodeExpression(MemberInfo member, Type memberType, UnaryExpression obj)
         {
-            var fieldExpr = Expression.Field(obj, field);
+            var memberAccessExpr = Expression.MakeMemberAccess(obj, member);
 
-            var getHashCodeExpr = IsSequenceType(field.FieldType)
-                ? MakeCallOnSequenceEqualityComparerExpression("GetHashCode", field.FieldType, fieldExpr)
-                : Expression.Call(fieldExpr, "GetHashCode", Type.EmptyTypes);
+            var getHashCodeExpr = IsSequenceType(memberType)
+                ? MakeCallOnSequenceEqualityComparerExpression("GetHashCode", memberType, memberAccessExpr)
+                : Expression.Call(memberAccessExpr, "GetHashCode", Type.EmptyTypes);
 
             return Expression.Condition(
-                Expression.ReferenceEqual(Expression.Constant(null), Expression.Convert(fieldExpr, typeof(object))), // If field is null
+                Expression.ReferenceEqual(Expression.Constant(null), Expression.Convert(memberAccessExpr, typeof(object))), // If member is null
                 Expression.Constant(0), // Return 0
                 getHashCodeExpr); // Return the actual getHashCode call
         }
