@@ -10,7 +10,6 @@ namespace Belt.Equatable
 
     public abstract class ValueBasedEquatable<TSelf, TValue> : IEquatable<ValueBasedEquatable<TSelf, TValue>>, IValueBasedEquatable<TValue>
     {
-        // TODO This is a problem when TValue is e.g. a string
         private static readonly MemberwiseEqualityComparer<Tuple<TValue>> _equalityComparer = MemberwiseEqualityComparer<Tuple<TValue>>.ByFields;
 
         protected abstract TValue EquatableValue { get; }
