@@ -109,10 +109,11 @@ namespace Belt.Equatable
         private static Expression MakeGetHashCodeExpression(MemberInfo member, Type memberType, UnaryExpression obj)
         {
             var memberAccessExpr = Expression.MakeMemberAccess(obj, member);
+            var memberAccessAsObjExpr = Expression.Convert(memberAccessExpr, typeof(object));
 
             var getHashCodeExpr = IsSequenceType(memberType)
                 ? MakeCallOnSequenceEqualityComparerExpression("GetHashCode", memberType, memberAccessExpr)
-                : Expression.Call(memberAccessExpr, "GetHashCode", Type.EmptyTypes);
+                : Expression.Call(memberAccessAsObjExpr, "GetHashCode", Type.EmptyTypes);
 
             return Expression.Condition(
                 Expression.ReferenceEqual(Expression.Constant(null), Expression.Convert(memberAccessExpr, typeof(object))), // If member is null

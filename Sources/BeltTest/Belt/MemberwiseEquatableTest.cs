@@ -8,6 +8,7 @@
 
     using global::Belt.Equatable;
     using global::Belt.FinalList;
+    using global::Belt.Maybe;
 
     using Xunit;
 
@@ -17,7 +18,7 @@
         [Fact]
         public void Self_equality_is_sane()
         {
-            var x = new ValueType("asdf", 42, true, new CustomRefType("qwer"), new ValueType2("xyz"));
+            var x = new ValueType("asdf", 42, true, new CustomRefType("qwer"), new ValueType2("xyz"), Maybe.Is(new ValueType3(4)));
 
             // ReSharper disable EqualExpressionComparison
             Assert.True(x.Equals(x));
@@ -34,8 +35,8 @@
         public void Value_objects_with_equal_members_are_equal()
         {
             var customRefType = new CustomRefType("qwer");
-            var x = new ValueType("asdf", 42, true, customRefType, new ValueType2("xyz"));
-            var y = new ValueType("asdf", 42, false, customRefType, new ValueType2("xyz"));
+            var x = new ValueType("asdf", 42, true, customRefType, new ValueType2("xyz"), Maybe.Is(new ValueType3(4)));
+            var y = new ValueType("asdf", 42, false, customRefType, new ValueType2("xyz"), Maybe.Is(new ValueType3(4)));
 
             Assert.True(x.Equals(y));
             Assert.True(y.Equals(x));
@@ -49,8 +50,8 @@
         public void Contained_value_types_are_compared_by_reference()
         { 
             // The second CustomRefType is different from the first
-            var x = new ValueType("asdf", 42, true, new CustomRefType("qwer"), new ValueType2("xyz"));
-            var y = new ValueType("asdf", 42, true, new CustomRefType("qwer"), new ValueType2("xyz"));
+            var x = new ValueType("asdf", 42, true, new CustomRefType("qwer"), new ValueType2("xyz"), Maybe.Is(new ValueType3(4)));
+            var y = new ValueType("asdf", 42, true, new CustomRefType("qwer"), new ValueType2("xyz"), Maybe.Is(new ValueType3(4)));
 
             Assert.False(x.Equals(y));
             Assert.False(y.Equals(x));
@@ -77,8 +78,8 @@
         [Fact]
         public void Null_values_do_not_throw_exceptions_in_equals_and_getHashCode()
         {
-            var x = new ValueType("asdf", 42, true, null, new ValueType2("xyz"));
-            var y = new ValueType("asdf", 42, true, null, new ValueType2("xyz"));
+            var x = new ValueType("asdf", 42, true, null, new ValueType2("xyz"), Maybe.Is(new ValueType3(4)));
+            var y = new ValueType("asdf", 42, true, null, new ValueType2("xyz"), Maybe.Is(new ValueType3(4)));
 
             Assert.True(x.Equals(y));
             Assert.True(y.Equals(x));
@@ -127,13 +128,16 @@
 
             private readonly ValueType2 _value5;
 
-            public ValueType(string value1, int value2, bool value3, CustomRefType value4, ValueType2 value5)
+            private readonly IMaybe<ValueType3> _value6;
+
+            public ValueType(string value1, int value2, bool value3, CustomRefType value4, ValueType2 value5, IMaybe<ValueType3> value6)
             {
                 _value1 = value1;
                 _value2 = value2;
                 _value3 = value3;
                 _value4 = value4;
                 _value5 = value5;
+                _value6 = value6;
             }
         }
 

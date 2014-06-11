@@ -155,5 +155,10 @@ namespace Belt.Maybe
         {
             return _exists ? FinalList.Create(_value) : FinalList.Empty<T>();
         }
+
+        public override int GetHashCode()
+        {
+            return _exists ? _value.GetHashCode() : 7907;
+        }
     }
 }
