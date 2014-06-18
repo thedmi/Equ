@@ -3,7 +3,6 @@
     using System;
 
     public abstract class MemberwiseEquatable<TSelf> : IEquatable<TSelf>
-        where TSelf : class
     {
         static MemberwiseEquatable()
         {
@@ -17,7 +16,7 @@
 
         public bool Equals(TSelf other)
         {
-            return _equalityComparer.Equals(this as TSelf, other);
+            return _equalityComparer.Equals((TSelf)(object)this, other);
         }
 
         public override bool Equals(object obj)
@@ -39,7 +38,7 @@
 
         public override int GetHashCode()
         {
-            return _equalityComparer.GetHashCode(this as TSelf);
+            return _equalityComparer.GetHashCode((TSelf)(object)this);
         }
 
         public static bool operator ==(MemberwiseEquatable<TSelf> left, MemberwiseEquatable<TSelf> right)
