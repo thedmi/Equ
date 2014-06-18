@@ -66,12 +66,20 @@
 
         public bool Equals(T x, T y)
         {
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+            if (ReferenceEquals(null, x) || ReferenceEquals(null, y))
+            {
+                return false;
+            }
             return _equalsFunc(x, y);
         }
 
         public int GetHashCode(T obj)
         {
-            return _getHashCodeFunc(obj);
+            return ReferenceEquals(null, obj) ? 0 : _getHashCodeFunc(obj);
         }
     }
 }
