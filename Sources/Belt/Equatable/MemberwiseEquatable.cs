@@ -5,6 +5,14 @@
     public abstract class MemberwiseEquatable<TSelf> : IEquatable<TSelf>
         where TSelf : class
     {
+        static MemberwiseEquatable()
+        {
+            if (!typeof(MemberwiseEquatable<TSelf>).IsAssignableFrom(typeof(TSelf)))
+            {
+                throw new ArgumentException("The type argument TSelf must be a subclass of MemberwiseEquatable<TSelf>");
+            }
+        } 
+
         private static readonly MemberwiseEqualityComparer<TSelf> _equalityComparer = MemberwiseEqualityComparer<TSelf>.ByFields;
 
         public bool Equals(TSelf other)
