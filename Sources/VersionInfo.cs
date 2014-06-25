@@ -7,4 +7,4 @@
 [assembly: System.Reflection.AssemblyCompany("Dani Michel")]
 [assembly: System.Reflection.AssemblyCopyright("Copyright © 2014")]
 [assembly: System.Reflection.AssemblyVersion("0.8.3")]
-[assembly: System.Reflection.AssemblyInformationalVersion("Belt 0.8.3")]
+[assembly: System.Reflection.AssemblyInformationalVersion("Equ 0.8.3")]
