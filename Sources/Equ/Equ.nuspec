@@ -7,10 +7,10 @@
     <authors>$author$</authors>
     <owners>$author$</owners>
     <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
-    <projectUrl>https://github.com/thedmi/Belt</projectUrl>
+    <projectUrl>https://github.com/thedmi/Equ</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Minor usability improvements.</releaseNotes>
+    <releaseNotes>First standalone release (separated from Belt).</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>equality, conventions</tags>
   </metadata>
