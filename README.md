@@ -5,6 +5,8 @@ Equ is a .NET library that provides fast, convention-based equality operations f
 
 Members participating in equality operations are resolved through reflection, the resulting equality operations are then stored as compiled expression using LINQ expression trees. 
 
+Grab the NuGet [here](https://www.nuget.org/packages/Equ/).
+
 
 Usage
 ----------

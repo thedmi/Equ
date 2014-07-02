@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Equ")]
-[assembly: AssemblyDescription("Convention-based equality members for .NET")]
+[assembly: AssemblyDescription("Fast, convention-based equality member generation for .NET")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("Equ")]
 [assembly: AssemblyTrademark("")]
