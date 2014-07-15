@@ -1,7 +1,7 @@
 Equ
 ====
 
-Equ is a .NET library that provides fast, convention-based equality operations for your types. This is primarily useful for custom value types (in the sense of the value type pattern, not in the sense of `struct`. 
+Equ is a .NET library that provides fast, convention-based equality operations for your types. This is primarily useful for custom value types (in the sense of the value type pattern, not in the sense of `struct`). 
 
 Members participating in equality operations are resolved through reflection, the resulting equality operations are then stored as compiled expression using LINQ expression trees. 
 
