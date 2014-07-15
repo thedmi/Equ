@@ -28,10 +28,10 @@ namespace Equ
         {
             var objRaw = Expression.Parameter(typeof(object), "obj");
 
-            // cast to the subclass type
+            // cast to the concrete type
             var objParam = Expression.Convert(objRaw, _type);
 
-            // compound XOr expression
+            // compound XOR expression
             var getHashCodeExprs = GetIncludedMembers(_type).Select(p => MakeGetHashCodeExpression(p.Item1, p.Item2, objParam));
             var xorChainExpr = getHashCodeExprs.Aggregate((Expression)Expression.Constant(29), LinkHashCodeExpression);
             
@@ -43,7 +43,7 @@ namespace Equ
             var leftRaw = Expression.Parameter(typeof(object), "left");
             var rightRaw = Expression.Parameter(typeof(object), "right");
 
-            // cast to the subclass type
+            // cast to the concrete type
             var leftParam = Expression.Convert(leftRaw, _type);
             var rightParam = Expression.Convert(rightRaw, _type);
 
@@ -116,7 +116,7 @@ namespace Equ
                 : Expression.Call(memberAccessAsObjExpr, "GetHashCode", Type.EmptyTypes);
 
             return Expression.Condition(
-                Expression.ReferenceEqual(Expression.Constant(null), Expression.Convert(memberAccessExpr, typeof(object))), // If member is null
+                Expression.ReferenceEqual(Expression.Constant(null), memberAccessAsObjExpr), // If member is null
                 Expression.Constant(0), // Return 0
                 getHashCodeExpr); // Return the actual getHashCode call
         }

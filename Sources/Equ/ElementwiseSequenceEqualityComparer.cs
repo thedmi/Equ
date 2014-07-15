@@ -12,25 +12,25 @@
             get { return new ElementwiseSequenceEqualityComparer<T>(); }
         }
 
-        public override bool Equals(T xs, T ys)
+        public override bool Equals(T left, T right)
         {
-            if (ReferenceEquals(xs, ys))
+            if (ReferenceEquals(left, right))
             {
                 return true;
             }
-            if (ReferenceEquals(null, xs))
+            if (ReferenceEquals(null, left))
             {
                 return false;
             }
-            if (ReferenceEquals(null, ys))
+            if (ReferenceEquals(null, right))
             {
                 return false;
             }
 
-            var ex = xs.Cast<object>();
-            var ey = ys.Cast<object>();
+            var leftEnumerable = left.Cast<object>();
+            var rightEnumerable = right.Cast<object>();
 
-            return ex.SequenceEqual(ey);
+            return leftEnumerable.SequenceEqual(rightEnumerable);
         }
 
         public override int GetHashCode(T obj)
