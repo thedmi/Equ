@@ -9,7 +9,7 @@ namespace Equ
 
     public class EqualityFunctionGenerator
     {
-        private static readonly MethodInfo _objectEqualsMethod = typeof(object).GetMethod("Equals", BindingFlags.Static | BindingFlags.Public);
+        private static readonly MethodInfo _objectEqualsMethod = new Func<object, object, bool>(Equals).Method;
 
         private readonly Type _type;
 
@@ -32,7 +32,7 @@ namespace Equ
             var objParam = Expression.Convert(objRaw, _type);
 
             // compound XOR expression
-            var getHashCodeExprs = GetIncludedMembers(_type).Select(p => MakeGetHashCodeExpression(p.Item1, p.Item2, objParam));
+            var getHashCodeExprs = GetIncludedMembers(_type).Select(mi => MakeGetHashCodeExpression(mi, objParam));
             var xorChainExpr = getHashCodeExprs.Aggregate((Expression)Expression.Constant(29), LinkHashCodeExpression);
             
             return Expression.Lambda<Func<object, int>>(xorChainExpr, objRaw).Compile();
@@ -47,9 +47,9 @@ namespace Equ
             var leftParam = Expression.Convert(leftRaw, _type);
             var rightParam = Expression.Convert(rightRaw, _type);
 
-            // compound AND expression using short-circuit evaluation
-            var equalsExprs = GetIncludedMembers(_type).Select(p => MakeEqualsExpression(p.Item1, p.Item2, leftParam, rightParam));
-            var andChainExpr = equalsExprs.Aggregate((Expression)Expression.Constant(true), Expression.AndAlso);
+            // AND expression using short-circuit evaluation
+            var equalsExprs = GetIncludedMembers(_type).Select(mi => MakeEqualsExpression(mi, leftParam, rightParam));
+            var andChainExpr = equalsExprs.Aggregate(Expression.AndAlso);
 
             // call Object.Equals if second parameter doesn't match type
             var objectEqualsExpr = Expression.Equal(leftRaw, rightRaw);
@@ -61,12 +61,9 @@ namespace Equ
             return Expression.Lambda<Func<object, object, bool>>(useTypedEqualsExpression, leftRaw, rightRaw).Compile();
         }
 
-        private IEnumerable<Tuple<MemberInfo, Type>> GetIncludedMembers(Type type)
+        private IEnumerable<MemberInfo> GetIncludedMembers(Type type)
         {
-            var selectedFields = _fieldSelector(type).Select(f => Tuple.Create((MemberInfo)f, f.FieldType));
-            var selectedProperties = _propertySelector(type).Select(f => Tuple.Create((MemberInfo)f, f.PropertyType));
-
-            return selectedFields.Concat(selectedProperties);
+            return _fieldSelector(type).Cast<MemberInfo>().Concat(_propertySelector(type));
         }
 
         private static Expression LinkHashCodeExpression(Expression left, Expression right)
@@ -75,12 +72,14 @@ namespace Equ
             return Expression.ExclusiveOr(leftMultiplied, right);
         }
 
-        private static Expression MakeEqualsExpression(MemberInfo member, Type memberType, Expression left, Expression right)
+        private static Expression MakeEqualsExpression(MemberInfo member, Expression left, Expression right)
         {
             var leftMemberExpr = Expression.MakeMemberAccess(left, member);
             var rightMemberExpr = Expression.MakeMemberAccess(right, member);
 
-            if (memberType.IsValueType)
+            var memberType = leftMemberExpr.Type;
+
+            if (leftMemberExpr.Type.IsValueType)
             {
                 return MakeValueTypeEqualExpression(leftMemberExpr, rightMemberExpr);
             }
@@ -106,10 +105,12 @@ namespace Equ
             return Expression.Call(_objectEqualsMethod, left, right);
         }
 
-        private static Expression MakeGetHashCodeExpression(MemberInfo member, Type memberType, UnaryExpression obj)
+        private static Expression MakeGetHashCodeExpression(MemberInfo member, Expression obj)
         {
             var memberAccessExpr = Expression.MakeMemberAccess(obj, member);
             var memberAccessAsObjExpr = Expression.Convert(memberAccessExpr, typeof(object));
+
+            var memberType = memberAccessExpr.Type;
 
             var getHashCodeExpr = IsSequenceType(memberType)
                 ? MakeCallOnSequenceEqualityComparerExpression("GetHashCode", memberType, memberAccessExpr)
