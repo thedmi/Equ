@@ -6,5 +6,7 @@
 
 [assembly: System.Reflection.AssemblyCompany("Dani Michel")]
 [assembly: System.Reflection.AssemblyCopyright("Copyright © 2014")]
-[assembly: System.Reflection.AssemblyVersion("0.9.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("Equ 0.9.0")]
+
+[assembly: System.Reflection.AssemblyVersion("0.9")]
+[assembly: System.Reflection.AssemblyFileVersion("0.9.1")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.9.1")]
