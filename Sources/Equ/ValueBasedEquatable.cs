@@ -2,6 +2,7 @@
 {
     using System;
 
+    [Obsolete("Use MemberwiseEquatable instead. It has the same features, but a simpler interface.")]
     public abstract class ValueBasedEquatable<TSelf, TValue> : IEquatable<ValueBasedEquatable<TSelf, TValue>>, IValueBasedEquatable<TValue>
     {
         private static readonly MemberwiseEqualityComparer<Tuple<TValue>> _equalityComparer = MemberwiseEqualityComparer<Tuple<TValue>>.ByFields;
