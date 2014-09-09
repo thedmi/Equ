@@ -145,7 +145,7 @@
             }
         }
 
-        private class ValueType3 : ValueBasedEquatable<ValueType3, string>
+        private class ValueType3 : MemberwiseEquatable<ValueType3>
         {
             private readonly int _value;
 
@@ -155,8 +155,6 @@
             }
 
             public int Value { get { return _value; } }
-
-            protected override string EquatableValue { get { return Convert.ToString(_value); } }
         }
 
         private class DictionaryType : MemberwiseEquatable<DictionaryType>
