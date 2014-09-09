@@ -15,7 +15,7 @@
     /// <typeparam name="TSelf">The concrete type that should be equatable. This is almost always the type that
     /// derives from <see cref="MemberwiseEquatable{TSelf}"/>, e.g. <code>class MyClass : MemberwiseEquatable&lt;MyClass&gt;</code>
     /// </typeparam>
-    public abstract class MemberwiseEquatable<TSelf> : IEquatable<TSelf>
+    public abstract class MemberwiseEquatable<TSelf> : IMemberwiseEquatable<TSelf>
     {
         static MemberwiseEquatable()
         {

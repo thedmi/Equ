@@ -47,6 +47,7 @@
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="EqualityFunctionGenerator.cs" />
     <Compile Include="EquatableSequenceWrapper.cs" />
+    <Compile Include="IMemberwiseEquatable.cs" />
     <Compile Include="IValueBasedEquatable.cs" />
     <Compile Include="MemberwiseEqualityComparer.cs" />
     <Compile Include="MemberwiseEqualityIgnoreAttribute.cs" />
