@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/thedmi/Equ</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Preparation release for 1.0.0.</releaseNotes>
+    <releaseNotes>Obsolete classes removed. We now have a stable release of Equ!</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>equality, conventions</tags>
   </metadata>
