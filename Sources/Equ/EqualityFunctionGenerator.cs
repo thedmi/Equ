@@ -7,6 +7,9 @@ namespace Equ
     using System.Linq.Expressions;
     using System.Reflection;
 
+    /// <summary>
+    /// This class is able to produce compiled Equals() and GetHashCode() functions.
+    /// </summary>
     public class EqualityFunctionGenerator
     {
         private static readonly MethodInfo _objectEqualsMethod = new Func<object, object, bool>(Equals).Method;
@@ -17,6 +20,14 @@ namespace Equ
 
         private readonly Func<Type, IEnumerable<PropertyInfo>> _propertySelector;
 
+        /// <summary>
+        /// Creates a generator for type <paramref name="type"/>. The generated functions will consider all fields
+        /// and properties of <paramref name="type"/> that are returned by <paramref name="fieldSelector"/> and 
+        /// <paramref name="propertySelector"/>, respectively.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="fieldSelector"></param>
+        /// <param name="propertySelector"></param>
         public EqualityFunctionGenerator(Type type, Func<Type, IEnumerable<FieldInfo>> fieldSelector, Func<Type, IEnumerable<PropertyInfo>> propertySelector)
         {
             _type = type;
@@ -24,6 +35,11 @@ namespace Equ
             _propertySelector = propertySelector;
         }
 
+        /// <summary>
+        /// Generates a GetHashCode() function. The generated function should be cached at class-level scope, so that
+        /// the generation only takes place once per type. This can be achieved e.g. by storing the function in a static
+        /// readonly field.
+        /// </summary>
         public Func<object, int> MakeGetHashCodeMethod()
         {
             var objRaw = Expression.Parameter(typeof(object), "obj");
@@ -38,6 +54,11 @@ namespace Equ
             return Expression.Lambda<Func<object, int>>(xorChainExpr, objRaw).Compile();
         }
 
+        /// <summary>
+        /// Generates a Equals() function. The generated function should be cached at class-level scope, so that
+        /// the generation only takes place once per type. This can be achieved e.g. by storing the function in a static
+        /// readonly field.
+        /// </summary>
         public Func<object, object, bool> MakeEqualsMethod()
         {
             var leftRaw = Expression.Parameter(typeof(object), "left");

@@ -4,6 +4,12 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// An equality comparer for enumerable types that compares the enumerables element by element. Basically,
+    /// this is a wrapper around <see cref="Enumerable.SequenceEqual{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Collections.Generic.IEnumerable{TSource})"/>
+    /// with additional null checking.
+    /// </summary>
+    /// <typeparam name="T">The type of the enumerable, i.e. a type implementing <see cref="IEnumerable"/></typeparam>
     public class ElementwiseSequenceEqualityComparer<T> : EqualityComparer<T> where T : IEnumerable
     {
         // ReSharper disable once UnusedMember.Global

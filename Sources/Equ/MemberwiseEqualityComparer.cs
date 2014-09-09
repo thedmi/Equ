@@ -6,8 +6,13 @@
     using System.Reflection;
 
     /// <summary>
-    ///  Provides an implementation of EqualityComparer that performs memberwise
-    ///  equality comparison of objects.
+    /// Provides an implementation of <see cref="IEqualityComparer{T}"/>that performs memberwise
+    /// equality comparison of objects of type T. Use the <see cref="ByFields"/> or <see cref="ByProperties"/>
+    /// static instances to get one of the two comparison strategies that are supported by default. Note that both
+    /// honor <see cref="MemberwiseEqualityIgnoreAttribute"/>.
+    /// 
+    /// For more advanced scenarios, use the <see cref="Custom"/> creator and pass a <see cref="EqualityFunctionGenerator"/>
+    /// that matches your requirements.
     /// </summary>
     public class MemberwiseEqualityComparer<T> : IEqualityComparer<T>
     {
@@ -50,18 +55,29 @@
 
         private static IEnumerable<FieldInfo> AllFieldsExceptIgnored(Type t)
         {
-            return
-                t.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(fi => fi.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Length == 0);
+            return t.GetFields(AllInstanceMembers).Where(IsNotMarkedAsIgnore);
         }
 
         private static IEnumerable<PropertyInfo> AllPropertiesExceptIgnored(Type t)
         {
-            return
-                t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(fi => fi.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Length == 0);
+            return t.GetProperties(AllInstanceMembers).Where(IsNotMarkedAsIgnore);
         }
 
+        private static BindingFlags AllInstanceMembers
+        {
+            get { return BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic; }
+        }
+
+        private static bool IsNotMarkedAsIgnore(MemberInfo memberInfo)
+        {
+            return memberInfo.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Length == 0;
+        }
+
+        /// <summary>
+        /// This method delegates to the generated equality function. Note that first a reference check 
+        /// on <paramref name="x"/> and <paramref name="y"/> (reference equality and null-check) is performed.
+        /// </summary>
+        /// <returns>True if <paramref name="x"/> and <paramref name="y"/> are memberwise equal.</returns>
         public bool Equals(T x, T y)
         {
             if (ReferenceEquals(x, y))
@@ -75,6 +91,11 @@
             return _equalsFunc(x, y);
         }
 
+        /// <summary>
+        /// This method delegates to the generated hash code function. If <paramref name="obj"/> is null,
+        /// 0 is returned.
+        /// </summary>
+        /// <returns>The hash code for <paramref name="obj"/></returns>
         public int GetHashCode(T obj)
         {
             return ReferenceEquals(null, obj) ? 0 : _getHashCodeFunc(obj);

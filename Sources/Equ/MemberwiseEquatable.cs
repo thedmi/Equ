@@ -2,6 +2,19 @@
 {
     using System;
 
+    /// <summary>
+    /// By inheriting from this class, base classes receive automatically generated <see cref="IEquatable{T}.Equals(T)"/>
+    /// and <see cref="object.GetHashCode"/> implementations based on all fields that are not marked with the 
+    /// <see cref="MemberwiseEqualityIgnoreAttribute"/>.
+    /// 
+    /// If you cannot inherit from a class or require customization of the equality comparison, implement <see cref="IEquatable{T}"/>
+    /// and directly use a <see cref="MemberwiseEqualityComparer{T}"/>.
+    /// 
+    /// Note that the generated methods are cached for performance reasons.
+    /// </summary>
+    /// <typeparam name="TSelf">The concrete type that should be equatable. This is almost always the type that
+    /// derives from <see cref="MemberwiseEquatable{TSelf}"/>, e.g. <code>class MyClass : MemberwiseEquatable&lt;MyClass&gt;</code>
+    /// </typeparam>
     public abstract class MemberwiseEquatable<TSelf> : IEquatable<TSelf>
     {
         static MemberwiseEquatable()
