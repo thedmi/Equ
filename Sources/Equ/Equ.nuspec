@@ -10,8 +10,8 @@
     <projectUrl>https://github.com/thedmi/Equ</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Obsolete classes removed. We now have a stable release of Equ!</releaseNotes>
+    <releaseNotes>Nuget package problems fixed.</releaseNotes>
     <copyright>Copyright 2014</copyright>
-    <tags>equality, conventions</tags>
+    <tags>equality conventions</tags>
   </metadata>
 </package>
