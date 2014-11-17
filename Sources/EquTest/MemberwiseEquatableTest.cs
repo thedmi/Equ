@@ -1,6 +1,5 @@
 ﻿namespace EquTest
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
@@ -11,7 +10,6 @@
 
     public class MemberwiseEquatableTest
     {
-
         [Fact]
         public void Self_equality_is_sane()
         {
@@ -44,7 +42,7 @@
         }
 
         [Fact]
-        public void Contained_value_types_are_compared_by_reference()
+        public void Contained_reference_types_are_compared_by_reference()
         { 
             // The second CustomRefType is different from the first
             var x = new ValueType("asdf", 42, true, new CustomRefType("qwer"), new ValueType2("xyz"));

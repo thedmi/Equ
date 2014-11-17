@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    /// By inheriting from this class, base classes receive automatically generated <see cref="IEquatable{T}.Equals(T)"/>
+    /// By inheriting from this class, subclasses receive automatically generated <see cref="IEquatable{T}.Equals(T)"/>
     /// and <see cref="object.GetHashCode"/> implementations based on all fields that are not marked with the 
     /// <see cref="MemberwiseEqualityIgnoreAttribute"/>.
     /// 

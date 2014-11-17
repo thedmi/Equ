@@ -46,6 +46,7 @@
     <Compile Include="ElementwiseSequenceEqualityComparer.cs" />
     <Compile Include="EqualityFunctionGenerator.cs" />
     <Compile Include="IMemberwiseEquatable.cs" />
+    <Compile Include="IPropertywiseEquatable.cs" />
     <Compile Include="MemberwiseEqualityComparer.cs" />
     <Compile Include="MemberwiseEqualityIgnoreAttribute.cs" />
     <Compile Include="MemberwiseEquatable.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="PropertywiseEquatable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Equ.nuspec">

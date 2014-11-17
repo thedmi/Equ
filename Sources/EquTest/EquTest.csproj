@@ -66,6 +66,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="PropertywiseEquatableTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
