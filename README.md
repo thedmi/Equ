@@ -15,11 +15,76 @@ Usage
 
 The easiest way to leverage Equ is to derive your class from `MemberwiseEquatable<TSelf>` where `TSelf` is the deriving class itself. `MemberwiseEquatable<TSelf>` uses field-based equality, so your class gets `Equals()` and `GetHashCode()` implementations that consider all fields. 
 
+#### Example
+
+The following example shows a very simple value object called `Address` that consists of two string members.
+
+```csharp
+using Equ;
+
+class Address : MemberwiseEquatable<Address>
+{
+    private readonly string _street;
+    private readonly string _city;
+
+    public Address(string street, string city)
+    {
+        _street = street;
+        _city = city;
+    }
+
+    public string Street { get { return _street; } }
+    public string City { get { return _city; } }
+}
+```
+
+With this value object, the following expression is true, because `MemberwiseEquatable<Address>` provides an overload for the `==` operator that eventually *compares all private fields* of `Address`.
+
+```csharp
+new Address("Baker Street", "London") == new Address("Baker Street", "London") // true
+```
 
 ### Customizable Equality Comparer
 
 If you need more control or do not want to inherit from `MemberwiseEquatable<TSelf>`, just implement `IEquatable<T>` and delegate `Equals()` and `GetHashCode()` to an instance of `MemberwiseEqualityComparer<T>`. `MemberwiseEqualityComparer<T>` offers static instances through `ByFields` and `ByProperties`. Or you can even create a completely customized comparer by using `MemberwiseEqualityComparer<T>.Create(EqualityFunctionGenerator)`.
 
+#### Example
+
+The same example as above, only this time we use a non-default comparer to compare the properties (instead of comparing the fields).
+
+```csharp
+using Equ;
+
+class Address : IEquatable<Address>
+{
+    private static readonly MemberwiseEqualityComparer<Address> _comparer = 
+        MemberwiseEqualityComparer<Address>.ByProperties;
+
+    public Address(string street, string city)
+    {
+        Street = street;
+        City = city;
+    }
+
+    public string Street { get; private set; }
+    public string City { get; private set; }
+
+    public bool Equals(Address other)
+    {
+        return _comparer.Equals(this, other);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as Address);
+    }
+
+    public override int GetHashCode()
+    {
+        return _comparer.GetHashCode(this);
+    }
+}
+```
 
 ### Compositional Integrity
 
