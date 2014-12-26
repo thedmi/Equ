@@ -102,18 +102,15 @@ namespace Equ
 
             if (leftMemberExpr.Type.IsValueType)
             {
-                return MakeValueTypeEqualExpression(leftMemberExpr, rightMemberExpr);
+                var boxedLeftMemberExpr = Expression.Convert(leftMemberExpr, typeof(object));
+                var boxedRightMemberExpr = Expression.Convert(rightMemberExpr, typeof(object));
+                return MakeReferenceTypeEqualExpression(boxedLeftMemberExpr, boxedRightMemberExpr);
             }
             if (IsSequenceType(memberType))
             {
                 return MakeSequenceTypeEqualExpression(leftMemberExpr, rightMemberExpr, memberType);
             }
             return MakeReferenceTypeEqualExpression(leftMemberExpr, rightMemberExpr);
-        }
-
-        private static Expression MakeValueTypeEqualExpression(Expression left, Expression right)
-        {
-            return Expression.Equal(left, right);
         }
 
         private static Expression MakeSequenceTypeEqualExpression(Expression left, Expression right, Type enumerableType)
