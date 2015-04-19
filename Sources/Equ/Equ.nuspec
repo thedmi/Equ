@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/thedmi/Equ</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Value types are now boxed and passed to object.Equals() instead of using Expression.Equal(). This fixes a bug where certain value types did not work with Equ.</releaseNotes>
+    <releaseNotes>Bug fixed in the PropertywiseEquatable. It uses now MemberwiseEqualityComparer.ByProperties as it should.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>equality conventions</tags>
   </metadata>
