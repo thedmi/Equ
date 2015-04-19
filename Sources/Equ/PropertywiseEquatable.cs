@@ -12,7 +12,7 @@
             }
         } 
 
-        private static readonly MemberwiseEqualityComparer<TSelf> _equalityComparer = MemberwiseEqualityComparer<TSelf>.ByFields;
+        private static readonly MemberwiseEqualityComparer<TSelf> _equalityComparer = MemberwiseEqualityComparer<TSelf>.ByProperties;
 
         public bool Equals(TSelf other)
         {
