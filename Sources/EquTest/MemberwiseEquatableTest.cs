@@ -107,6 +107,21 @@
             Assert.Equal(x.GetHashCode(), y.GetHashCode());
         }
 
+        [Fact]
+        public void Inherited_members_are_compared()
+        {
+            var x1 = new SubValueType1(12, 34);
+            var x2 = new SubValueType1(12, 34);
+
+            Assert.Equal(x1, x2);
+
+            // WARNING: Base class members are not considered in the equality comparison, so the following object is considered
+            // equal to x1 and x2. To work around this issue, add all equality comparison relevant members to the concrete classes
+            // as well, or use a custom equality comparer.
+            var y = new SubValueType1(99, 34);
+            Assert.Equal(x1, y);
+        }
+
         // TODO Add sequence equality tests
 
         // ReSharper disable NotAccessedField.Local
@@ -184,6 +199,39 @@
                 _values = values;
             }
         }
+
+        private abstract class AbstractValueType<TSelf> : MemberwiseEquatable<TSelf>
+        {
+            private readonly int _val1;
+
+            protected AbstractValueType(int val1)
+            {
+                _val1 = val1;
+            }
+        }
+
+        private class SubValueType1 : AbstractValueType<SubValueType1>
+        {
+            private readonly int _val2;
+
+            public SubValueType1(int val1, int val2)
+                : base(val1)
+            {
+                _val2 = val2;
+            }
+        }
+
+        private class SubValueType2 : AbstractValueType<SubValueType2>
+        {
+            private readonly int _val2;
+
+            public SubValueType2(int val1, int val2)
+                : base(val1)
+            {
+                _val2 = val2;
+            }
+        }
+
         // ReSharper restore NotAccessedField.Local
     }
 }
