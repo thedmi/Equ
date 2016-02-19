@@ -1,9 +1,9 @@
 Equ
 ====
 
-Equ is a .NET library that provides fast, convention-based equality operations for your types. This is primarily useful for custom value types (in the sense of the [value object pattern](http://en.wikipedia.org/wiki/Value_object), not in the sense of `struct`). 
+Equ is a .NET library that provides fast, convention-based equality operations for your types. This is primarily useful for custom value types (in the sense of the [value object pattern](http://en.wikipedia.org/wiki/Value_object), not in the sense of `struct`).
 
-Members participating in equality operations are resolved through reflection, the resulting equality operations are then stored as compiled expression using LINQ expression trees. 
+Members participating in equality operations are resolved through reflection, the resulting equality operations are then stored as compiled expression using LINQ expression trees. This makes the runtime performance as fast as with a manual implementation.
 
 Grab the NuGet [here](https://www.nuget.org/packages/Equ/).
 
@@ -13,7 +13,7 @@ Usage
 
 ### Simple Scenarios
 
-The easiest way to leverage Equ is to derive your class from `MemberwiseEquatable<TSelf>` where `TSelf` is the deriving class itself. `MemberwiseEquatable<TSelf>` uses field-based equality, so your class gets `Equals()` and `GetHashCode()` implementations that consider all fields. 
+The easiest way to leverage Equ is to derive your class from `MemberwiseEquatable<TSelf>` where `TSelf` is the deriving class itself. `MemberwiseEquatable<TSelf>` uses field-based equality, so your class gets `Equals()` and `GetHashCode()` implementations that consider all fields.
 
 #### Example
 
@@ -38,27 +38,50 @@ class Address : MemberwiseEquatable<Address>
 }
 ```
 
+Note that C# 6 read-only auto properties have compiler-generated backing fields as well, so there following code does exactly the same:
+
+
+```csharp
+using Equ;
+
+class Address : MemberwiseEquatable<Address>
+{
+    public Address(string street, string city)
+    {
+        Street = street;
+        City = city;
+    }
+
+    public string Street { get; }
+    public string City { get; }
+}
+```
+
 With this value object, the following expression is true, because `MemberwiseEquatable<Address>` provides an overload for the `==` operator that eventually *compares all private fields* of `Address`.
 
 ```csharp
 new Address("Baker Street", "London") == new Address("Baker Street", "London") // true
 ```
 
+
 ### Customizable Equality Comparer
 
-If you need more control or do not want to inherit from `MemberwiseEquatable<TSelf>`, just implement `IEquatable<T>` and delegate `Equals()` and `GetHashCode()` to an instance of `MemberwiseEqualityComparer<T>`. `MemberwiseEqualityComparer<T>` offers static instances through `ByFields` and `ByProperties`. Or you can even create a completely customized comparer by using `MemberwiseEqualityComparer<T>.Create(EqualityFunctionGenerator)`.
+For most scenarios, the simple usage should be fine. But if you need more control or do not want to inherit from `MemberwiseEquatable<TSelf>`, just implement `IEquatable<T>` and delegate `Equals()` and `GetHashCode()` to an instance of `MemberwiseEqualityComparer<T>`. `MemberwiseEqualityComparer<T>` offers static instances through `ByFields` and `ByProperties`.
+
+For very advanced scenarios, you can even create a completely customized comparer by using `MemberwiseEqualityComparer<T>.Create(EqualityFunctionGenerator)`.
 
 #### Example
 
-The same example as above, only this time we use a non-default comparer to compare the properties (instead of comparing the fields).
+The same example as above, only this time we don't inherit from `MemberwiseEquatable`.
 
 ```csharp
 using Equ;
 
 class Address : IEquatable<Address>
 {
-    private static readonly MemberwiseEqualityComparer<Address> _comparer = 
-        MemberwiseEqualityComparer<Address>.ByProperties;
+    // Make sure the comparer is static, so that the equality operations are only generated once
+    private static readonly MemberwiseEqualityComparer<Address> _comparer =
+        MemberwiseEqualityComparer<Address>.ByFields;
 
     public Address(string street, string city)
     {
@@ -66,8 +89,8 @@ class Address : IEquatable<Address>
         City = city;
     }
 
-    public string Street { get; private set; }
-    public string City { get; private set; }
+    public string Street { get; }
+    public string City { get; }
 
     public bool Equals(Address other)
     {
@@ -95,5 +118,3 @@ At the core of Equ lives the `EqualityFunctionGenerator`, which is responsible f
 - For sequence-typed members, a call to an appropriate `ElementwiseSequenceEqualityComparer<T>` is generated
 
 The `ElementwiseSequenceEqualityComparer<T>` is basically just a wrapper around `Enumerable.SequenceEqual()` with additional null checks.
-
-
