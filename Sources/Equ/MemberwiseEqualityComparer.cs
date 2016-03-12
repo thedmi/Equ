@@ -6,7 +6,7 @@
     using System.Reflection;
 
     /// <summary>
-    /// Provides an implementation of <see cref="IEqualityComparer{T}"/>that performs memberwise
+    /// Provides an implementation of <see cref="IEqualityComparer{T}"/> that performs memberwise
     /// equality comparison of objects of type T. Use the <see cref="ByFields"/> or <see cref="ByProperties"/>
     /// static instances to get one of the two comparison strategies that are supported by default. Note that both
     /// honor <see cref="MemberwiseEqualityIgnoreAttribute"/>.
