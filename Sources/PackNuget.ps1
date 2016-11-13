@@ -1,6 +1,6 @@
 
 Push-Location Equ
 
-nuget pack -Build -Prop Configuration=Release -Output ..\..\..\LocalNugetFeed
+nuget pack Equ.csproj -Build -Prop Configuration=Release -Output ..\..\..\LocalNugetFeed
 
 Pop-Location
