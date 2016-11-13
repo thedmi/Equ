@@ -10,8 +10,8 @@
     <projectUrl>https://github.com/thedmi/Equ</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Bug fixed in the PropertywiseEquatable. It uses now MemberwiseEqualityComparer.ByProperties as it should.</releaseNotes>
-    <copyright>Copyright 2014</copyright>
-    <tags>equality conventions</tags>
+    <releaseNotes>Support for empty value types added. This fixes Github issue #3.</releaseNotes>
+    <copyright>Copyright 2014 - 2016</copyright>
+    <tags>equality comparison conventions</tags>
   </metadata>
 </package>
