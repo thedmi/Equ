@@ -70,7 +70,7 @@ namespace Equ
 
             // AND expression using short-circuit evaluation
             var equalsExprs = GetIncludedMembers(_type).Select(mi => MakeEqualsExpression(mi, leftParam, rightParam));
-            var andChainExpr = equalsExprs.Aggregate(Expression.AndAlso);
+            var andChainExpr = equalsExprs.Aggregate((Expression)Expression.Constant(true), Expression.AndAlso);
 
             // call Object.Equals if second parameter doesn't match type
             var objectEqualsExpr = Expression.Equal(leftRaw, rightRaw);

@@ -122,6 +122,15 @@
             Assert.Equal(x1, y);
         }
 
+        [Fact]
+        public void Empty_value_types_dont_throw()
+        {
+            var x1 = new EmptyValueType();
+            var x2 = new EmptyValueType();
+
+            Assert.Equal(x1, x2);
+        }
+
         // TODO Add sequence equality tests
 
         // ReSharper disable NotAccessedField.Local
@@ -209,6 +218,8 @@
                 _val1 = val1;
             }
         }
+
+        private class EmptyValueType : MemberwiseEquatable<EmptyValueType> { }
 
         private class SubValueType1 : AbstractValueType<SubValueType1>
         {
