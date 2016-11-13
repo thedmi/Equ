@@ -24,28 +24,6 @@ using Equ;
 
 class Address : MemberwiseEquatable<Address>
 {
-    private readonly string _street;
-    private readonly string _city;
-
-    public Address(string street, string city)
-    {
-        _street = street;
-        _city = city;
-    }
-
-    public string Street { get { return _street; } }
-    public string City { get { return _city; } }
-}
-```
-
-Note that C# 6 read-only auto properties have compiler-generated backing fields as well, so there following code does exactly the same:
-
-
-```csharp
-using Equ;
-
-class Address : MemberwiseEquatable<Address>
-{
     public Address(string street, string city)
     {
         Street = street;
@@ -57,7 +35,7 @@ class Address : MemberwiseEquatable<Address>
 }
 ```
 
-With this value object, the following expression is true, because `MemberwiseEquatable<Address>` provides an overload for the `==` operator that eventually *compares all private fields* of `Address`.
+With this value object, the following expression is true, because `MemberwiseEquatable<Address>` provides an overload for the `==` operator that eventually *compares all private fields* of `Address` (note that read-only auto properties have compiler-generated backing fields).
 
 ```csharp
 new Address("Baker Street", "London") == new Address("Baker Street", "London") // true
