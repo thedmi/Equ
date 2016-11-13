@@ -17,10 +17,22 @@ The easiest way to leverage Equ is to derive your class from `MemberwiseEquatabl
 
 #### Example
 
-The following example shows a very simple value object called `Address` that consists of two string members.
+The following example shows a very simple value object called `Person`:
 
 ```csharp
 using Equ;
+
+class Person : MemberwiseEquatable<Person>
+{
+    public Person(string name, Address address)
+    {
+        Name = name;
+        Address = address;
+    }
+
+    public string Name { get; }
+    public Address Address { get; }
+}
 
 class Address : MemberwiseEquatable<Address>
 {
@@ -35,11 +47,14 @@ class Address : MemberwiseEquatable<Address>
 }
 ```
 
-With this value object, the following expression is true, because `MemberwiseEquatable<Address>` provides an overload for the `==` operator that eventually *compares all private fields* of `Address` (note that read-only auto properties have compiler-generated backing fields).
+With these two value objects, the following expression is true:
 
 ```csharp
-new Address("Baker Street", "London") == new Address("Baker Street", "London") // true
+new Person("Sherlock", new Address("Baker Street", "London")) == new Person("Sherlock", new Address("Baker Street", "London")) // true
 ```
+
+This works because `MemberwiseEquatable` provides an overload for the `==` operator that eventually *compares all private fields* of the objects in question (note that auto properties have compiler-generated backing fields).
+
 
 
 ### Customizable Equality Comparer
