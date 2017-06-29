@@ -139,3 +139,7 @@ At the core of Equ lives the `EqualityFunctionGenerator`, which is responsible f
 - For sequence-typed members, a call to an appropriate `ElementwiseSequenceEqualityComparer<T>` is generated
 
 The `ElementwiseSequenceEqualityComparer<T>` is basically just a wrapper around `Enumerable.SequenceEqual()` with additional null checks.
+
+## Release Notes
+
+See [Release Notes](ReleaseNotes.md).
