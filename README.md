@@ -56,6 +56,34 @@ new Person("Sherlock", new Address("Baker Street", "London")) == new Person("She
 This works because `MemberwiseEquatable` provides an overload for the `==` operator that eventually *compares all private fields* of the objects in question (note that auto properties have compiler-generated backing fields).
 
 
+### Excluding Members from Equality Comparison
+
+To exclude certain fields (or properties if using property-based comparison) from equality comparison, just mark them with the `[MemberwiseEqualityIgnore]` attribute like so:
+
+```csharp
+using Equ;
+
+class Record : MemberwiseEquatable<Record>
+{
+    public Record(string value1, string value2, string transientValue)
+    {
+        Value1 = value1;
+        Value2 = value2;
+        TransientValue = transientValue;
+    }
+
+    public string Value1 { get; }
+
+    public string Value2 { get; }
+
+    [MemberwiseEqualityIgnore]
+    public string TransientValue { get; }
+}
+
+// later...
+
+new Record("v1", "v2", "A") == new Record("v1", "v2", "B") // true
+```
 
 ### Customizable Equality Comparer
 
