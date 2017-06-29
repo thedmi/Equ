@@ -12,7 +12,7 @@ namespace Equ
     /// </summary>
     public class EqualityFunctionGenerator
     {
-        private static readonly MethodInfo _objectEqualsMethod = new Func<object, object, bool>(Equals).Method;
+        private static readonly MethodInfo _objectEqualsMethod = new Func<object, object, bool>(Equals).GetMethodInfo();
 
         private readonly Type _type;
 
@@ -100,7 +100,7 @@ namespace Equ
 
             var memberType = leftMemberExpr.Type;
 
-            if (leftMemberExpr.Type.IsValueType)
+            if (leftMemberExpr.Type.GetTypeInfo().IsValueType)
             {
                 var boxedLeftMemberExpr = Expression.Convert(leftMemberExpr, typeof(object));
                 var boxedRightMemberExpr = Expression.Convert(rightMemberExpr, typeof(object));
@@ -143,7 +143,7 @@ namespace Equ
         private static Expression MakeCallOnSequenceEqualityComparerExpression(string methodName, Type enumerableType, params Expression[] parameterExpressions)
         {
             var comparerType = typeof(ElementwiseSequenceEqualityComparer<>).MakeGenericType(enumerableType);
-            var comparerInstance = comparerType.GetProperty("Default", BindingFlags.Static | BindingFlags.Public).GetValue(null);
+            var comparerInstance = comparerType.GetTypeInfo().GetProperty("Default", BindingFlags.Static | BindingFlags.Public).GetValue(null);
             var comparerExpr = Expression.Constant(comparerInstance);
 
             return Expression.Call(comparerExpr, methodName, Type.EmptyTypes, parameterExpressions);
@@ -151,7 +151,7 @@ namespace Equ
 
         private static bool IsSequenceType(Type type)
         {
-            return typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string);
+            return typeof(IEnumerable).GetTypeInfo().IsAssignableFrom(type) && type != typeof(string);
         }
     }
 }

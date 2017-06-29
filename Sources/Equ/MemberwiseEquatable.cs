@@ -1,6 +1,7 @@
 ﻿namespace Equ
 {
     using System;
+    using System.Reflection;
 
     /// <summary>
     /// By inheriting from this class, subclasses receive automatically generated <see cref="IEquatable{T}.Equals(T)"/>
@@ -19,7 +20,7 @@
     {
         static MemberwiseEquatable()
         {
-            if (!typeof(MemberwiseEquatable<TSelf>).IsAssignableFrom(typeof(TSelf)))
+            if (!typeof(MemberwiseEquatable<TSelf>).GetTypeInfo().IsAssignableFrom(typeof(TSelf)))
             {
                 throw new ArgumentException("The type argument TSelf must be a subclass of MemberwiseEquatable<TSelf>");
             }

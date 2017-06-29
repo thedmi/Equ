@@ -55,12 +55,12 @@
 
         private static IEnumerable<FieldInfo> AllFieldsExceptIgnored(Type t)
         {
-            return t.GetFields(AllInstanceMembers).Where(IsNotMarkedAsIgnore);
+            return t.GetTypeInfo().GetFields(AllInstanceMembers).Where(IsNotMarkedAsIgnore);
         }
 
         private static IEnumerable<PropertyInfo> AllPropertiesExceptIgnored(Type t)
         {
-            return t.GetProperties(AllInstanceMembers).Where(IsNotMarkedAsIgnore);
+            return t.GetTypeInfo().GetProperties(AllInstanceMembers).Where(IsNotMarkedAsIgnore);
         }
 
         private static BindingFlags AllInstanceMembers
@@ -70,7 +70,7 @@
 
         private static bool IsNotMarkedAsIgnore(MemberInfo memberInfo)
         {
-            return memberInfo.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Length == 0;
+            return !memberInfo.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Any();
         }
 
         /// <summary>

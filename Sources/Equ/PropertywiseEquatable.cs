@@ -1,12 +1,13 @@
 ﻿namespace Equ
 {
     using System;
+    using System.Reflection;
 
     public class PropertywiseEquatable<TSelf> : IPropertywiseEquatable<TSelf>
     {
         static PropertywiseEquatable()
         {
-            if (!typeof(PropertywiseEquatable<TSelf>).IsAssignableFrom(typeof(TSelf)))
+            if (!typeof(PropertywiseEquatable<TSelf>).GetTypeInfo().IsAssignableFrom(typeof(TSelf)))
             {
                 throw new ArgumentException("The type argument TSelf must be a subclass of PropertywiseEquatable<TSelf>");
             }

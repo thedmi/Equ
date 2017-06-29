@@ -1,4 +1,6 @@
-﻿namespace EquTest
+﻿// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+namespace EquTest
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -169,19 +171,17 @@
 
         private class ValueType3 : MemberwiseEquatable<ValueType3>
         {
-            private readonly int _value;
-
             public ValueType3(int value)
             {
-                _value = value;
+                Value = value;
             }
 
-            public int Value { get { return _value; } }
+            public int Value { get; }
         }
 
         private class DictionaryType : MemberwiseEquatable<DictionaryType>
         {
-            private readonly IDictionary<string, string> _dict = new Dictionary<string, string>();
+            private readonly IDictionary<string, string> _dict;
 
             public DictionaryType(IDictionary<string, string> dict)
             {

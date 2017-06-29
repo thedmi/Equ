@@ -7,6 +7,6 @@
 [assembly: System.Reflection.AssemblyCompany("Dani Michel")]
 [assembly: System.Reflection.AssemblyCopyright("Copyright © 2016")]
 
-[assembly: System.Reflection.AssemblyVersion("1.0.4")]
-[assembly: System.Reflection.AssemblyFileVersion("1.0.4")]
-[assembly: System.Reflection.AssemblyInformationalVersion("1.0.4")]
+[assembly: System.Reflection.AssemblyVersion("2.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("2.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("2.0.0")]

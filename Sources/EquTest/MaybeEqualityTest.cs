@@ -1,4 +1,5 @@
-﻿namespace EquTest
+﻿// ReSharper disable NotAccessedField.Local
+namespace EquTest
 {
     using Equ;
 
