@@ -133,6 +133,15 @@ namespace EquTest
             Assert.Equal(x1, x2);
         }
 
+        [Fact]
+        public void Ignoring_auto_properties_excludes_them_from_equality_comparison()
+        {
+            var v1 = new ValueType4(15, 62);
+            var v2 = new ValueType4(15, 13);
+
+            Assert.Equal(v1, v2);
+        }
+
         // TODO Add sequence equality tests
 
         // ReSharper disable NotAccessedField.Local
@@ -177,6 +186,20 @@ namespace EquTest
             }
 
             public int Value { get; }
+        }
+
+        private class ValueType4 : MemberwiseEquatable<ValueType4>
+        {
+            public ValueType4(int value, int ignoredValue)
+            {
+                Value = value;
+                IgnoredValue = ignoredValue;
+            }
+
+            public int Value { get; }
+
+            [MemberwiseEqualityIgnore]
+            public int IgnoredValue { get; }
         }
 
         private class DictionaryType : MemberwiseEquatable<DictionaryType>

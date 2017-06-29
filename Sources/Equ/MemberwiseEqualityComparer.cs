@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Provides an implementation of <see cref="IEqualityComparer{T}"/> that performs memberwise
@@ -16,6 +17,9 @@
     /// </summary>
     public class MemberwiseEqualityComparer<T> : IEqualityComparer<T>
     {
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly Regex _autoPropertyBackingFieldRegex = new Regex("^<([a-zA-Z][a-zA-Z0-9]*)>k__BackingField$");
+
         private readonly Func<object, object, bool> _equalsFunc;
 
         private readonly Func<object, int> _getHashCodeFunc;
@@ -38,9 +42,9 @@
                             t => new List<FieldInfo>(),
                             AllPropertiesExceptIgnored)));
 
-        public static MemberwiseEqualityComparer<T> ByFields { get { return _fieldsComparer.Value; } }
+        public static MemberwiseEqualityComparer<T> ByFields => _fieldsComparer.Value;
 
-        public static MemberwiseEqualityComparer<T> ByProperties { get { return _propertiesComparer.Value; } }
+        public static MemberwiseEqualityComparer<T> ByProperties => _propertiesComparer.Value;
 
         public static MemberwiseEqualityComparer<T> Custom(EqualityFunctionGenerator equalityFunctionGenerator)
         {
@@ -70,7 +74,27 @@
 
         private static bool IsNotMarkedAsIgnore(MemberInfo memberInfo)
         {
-            return !memberInfo.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Any();
+            var isSelfIgnored = memberInfo.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Any();
+
+            var propertyInfo = GetPropertyForBackingField(memberInfo);
+            var isPropertyIgnored = propertyInfo != null && propertyInfo.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Any();
+
+            return !isSelfIgnored && !isPropertyIgnored;
+        }
+
+        private static PropertyInfo GetPropertyForBackingField(MemberInfo memberInfo)
+        {
+            if (memberInfo is FieldInfo && _autoPropertyBackingFieldRegex.IsMatch(memberInfo.Name))
+            {
+                var match = _autoPropertyBackingFieldRegex.Match(memberInfo.Name);
+                if (match.Success && match.Groups.Count >= 2 && match.Groups[1].Captures.Count >= 1)
+                {
+                    var propertyName = match.Groups[1].Captures[0].Value;
+                    return memberInfo.DeclaringType.GetTypeInfo().GetProperties().SingleOrDefault(p => p.Name == propertyName);
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
