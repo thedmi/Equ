@@ -1,4 +1,4 @@
-﻿namespace EquTest
+﻿namespace Equ.Test
 {
     using System.Collections.Generic;
 

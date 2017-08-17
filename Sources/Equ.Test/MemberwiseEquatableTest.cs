@@ -1,6 +1,6 @@
 ﻿// ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local
-namespace EquTest
+namespace Equ.Test
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -25,6 +25,7 @@ namespace EquTest
             Assert.False(x.Equals(null));
             Assert.False(Equals(null, x));
 
+            // ReSharper disable once HeuristicUnreachableCode
             Assert.Equal(x.GetHashCode(), x.GetHashCode());
             // ReSharper restore EqualExpressionComparison
 #pragma warning restore 1718
