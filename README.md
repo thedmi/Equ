@@ -1,3 +1,8 @@
+
+[![Build Status](https://travis-ci.org/thedmi/Equ.svg?branch=master)](https://travis-ci.org/thedmi/Equ)
+[![NuGet](https://img.shields.io/nuget/v/Equ.svg)](https://www.nuget.org/packages/Equ/)
+
+
 Equ
 ====
 
