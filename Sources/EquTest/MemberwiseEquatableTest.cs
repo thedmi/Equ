@@ -17,6 +17,7 @@ namespace EquTest
         {
             var x = new ValueType("asdf", 42, true, new CustomRefType("qwer"), new ValueType2("xyz"));
 
+#pragma warning disable 1718
             // ReSharper disable EqualExpressionComparison
             Assert.True(x.Equals(x));
             Assert.True(x == x);
@@ -26,6 +27,7 @@ namespace EquTest
 
             Assert.Equal(x.GetHashCode(), x.GetHashCode());
             // ReSharper restore EqualExpressionComparison
+#pragma warning restore 1718
         }
 
         [Fact]

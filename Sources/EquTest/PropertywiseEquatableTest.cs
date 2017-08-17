@@ -11,6 +11,7 @@
         {
             var x = new ValueType("asdf", 42);
 
+#pragma warning disable 1718
             // ReSharper disable EqualExpressionComparison
             Assert.True(x.Equals(x));
             Assert.True(x == x);
@@ -20,6 +21,7 @@
 
             Assert.Equal(x.GetHashCode(), x.GetHashCode());
             // ReSharper restore EqualExpressionComparison
+#pragma warning restore 1718
         }
 
         [Fact]
