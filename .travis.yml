@@ -1,7 +1,6 @@
 language: csharp
 dist: trusty
-sudo: required
 mono: none
 dotnet: 1.0.1
-script:
-  - ./build.sh
+before_script: cd Sources
+script: dotnet restore && dotnet build
