@@ -1,6 +1,11 @@
 Equ Releases
 =============
 
+## 2.0.2
+
+- [PR #6](https://github.com/thedmi/Equ/pull/6) `ElementwiseSequenceEqualityComparer.GetHashCode()` handles now `null` values correctly. Thanks to **zgabi** for the PR.
+
+
 ## 2.0.1
 
 - `[MemberwiseEqualityIgnore]` mechanism fixed for cases where auto properties are used with the field-based equality comparer.

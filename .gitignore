@@ -19,3 +19,4 @@ _ReSharper*/
 */.idea/*
 Sources/packages
 *.nupkg
+/Sources/.vs/Equ/v15/Server/sqlite3/*
