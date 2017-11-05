@@ -12,6 +12,8 @@
     <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/thedmi/Equ</PackageProjectUrl>
     <PackageTags>equality, iequatable, generator</PackageTags>
+    <Copyright>Dani Michel</Copyright>
+    <PackageReleaseNotes>See https://github.com/thedmi/Equ/blob/master/ReleaseNotes.md</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>

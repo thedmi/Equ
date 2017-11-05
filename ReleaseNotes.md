@@ -1,6 +1,8 @@
 Equ Releases
 =============
 
+*Equ uses [SemVer](http://semver.org/) as versioning scheme.*
+
 ## 2.0.2
 
 - [PR #6](https://github.com/thedmi/Equ/pull/6) `ElementwiseSequenceEqualityComparer.GetHashCode()` handles now `null` values correctly. Thanks to **zgabi** for the PR.
