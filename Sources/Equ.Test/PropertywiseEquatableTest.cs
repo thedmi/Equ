@@ -53,6 +53,15 @@
             Assert.NotEqual(x.GetHashCode(), y.GetHashCode());
         }
 
+        [Fact]
+        public void Ignore_index_properties()
+        {
+            var v1 = new IndexedValueType(15);
+            var v2 = new IndexedValueType(15);
+
+            Assert.Equal(v1, v2);
+        }
+
         private class ValueType : PropertywiseEquatable<ValueType>
         {
             public ValueType(string x, int y)
@@ -66,6 +75,24 @@
 
             // ReSharper disable once UnusedAutoPropertyAccessor.Local
             public int Y { get; private set; }
+        }
+
+        private class IndexedValueType : PropertywiseEquatable<IndexedValueType>
+        {
+            public IndexedValueType(int value)
+            {
+                Value = value;
+            }
+
+            public int Value { get; private set; }
+
+            public string this[string val]
+            {
+                get
+                {
+                    return val;
+                }
+            }
         }
     }
 }
