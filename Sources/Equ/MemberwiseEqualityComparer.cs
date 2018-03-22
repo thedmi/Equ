@@ -59,12 +59,20 @@
 
         private static IEnumerable<FieldInfo> AllFieldsExceptIgnored(Type t)
         {
-            return t.GetTypeInfo().GetFields(AllInstanceMembers).Where(IsNotMarkedAsIgnore);
+            List<FieldInfo> fieldInfo = t.GetTypeInfo().GetFields(AllInstanceMembers).Where(IsNotMarkedAsIgnore).OrderBy(f => f.Name).ToList();
+            fieldInfo.Sort((i1, i2) => i1.Name.CompareTo(i2.Name));
+
+            return fieldInfo;
         }
 
         private static IEnumerable<PropertyInfo> AllPropertiesExceptIgnored(Type t)
         {
-            return t.GetTypeInfo().GetProperties(AllInstanceMembers).Where(info => IsNotMarkedAsIgnore(info) && IsNotIndexed(info));
+            List<PropertyInfo> propertyInfo = t.GetTypeInfo().GetProperties(AllInstanceMembers)
+                                                             .Where(p => IsNotMarkedAsIgnore(p) && IsNotIndexed(p))
+                                                             .OrderBy(p => p.Name).ToList();
+            propertyInfo.Sort((i1, i2) => i1.Name.CompareTo(i2.Name));
+
+            return propertyInfo;
         }
 
         private static BindingFlags AllInstanceMembers

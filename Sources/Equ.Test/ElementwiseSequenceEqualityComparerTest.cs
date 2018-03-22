@@ -63,5 +63,53 @@
             Assert.False(comparer.Equals(e1, e2));
             Assert.False(comparer.Equals(e2, e1));
         }
+
+        [Fact]
+        public void Dictionaries_compare_equal()
+        {
+            var dict1 = new Dictionary<string, int>
+            {
+                ["abc"] = 1,
+                ["cde"] = 2
+            };
+            var dict2 = new Dictionary<string, int>
+            {
+                ["cde"] = 2,
+                ["abc"] = 1
+            };
+
+            var comparer = new ElementwiseSequenceEqualityComparer<Dictionary<string, int>>();
+
+            Assert.True(comparer.Equals(dict1, dict2));
+            Assert.True(comparer.Equals(dict2, dict1));
+
+            Assert.Equal(comparer.GetHashCode(dict1), comparer.GetHashCode(dict2));
+        }
+
+        [Fact]
+        public void Dictionaries_compare_different()
+        {
+            var dict1 = new Dictionary<string, int>
+            {
+                ["abc"] = 1,
+                ["cde"] = 2
+            };
+            var dict2 = new Dictionary<string, int>
+            {
+                ["cde"] = 2,
+                ["abc"] = 1,
+                ["fgh"] = 3
+            };
+            var dict3 = new Dictionary<string, int>
+            {
+                ["abc"] = 2,
+                ["cde"] = 2
+            };
+
+            var comparer = new ElementwiseSequenceEqualityComparer<Dictionary<string, int>>();
+
+            Assert.False(comparer.Equals(dict1, dict2));
+            Assert.False(comparer.Equals(dict1, dict3));
+        }
     }
 }

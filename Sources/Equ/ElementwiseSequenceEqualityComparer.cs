@@ -3,6 +3,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
 
     /// <summary>
     /// An equality comparer for enumerable types that compares the enumerables element by element. Basically,
@@ -32,6 +33,27 @@
             {
                 return false;
             }
+            
+            if (typeof(IDictionary).GetTypeInfo().IsAssignableFrom(typeof(T)))
+            {
+                IDictionary leftDict = (IDictionary)left;
+                IDictionary rightDict = (IDictionary)right;
+
+                if(leftDict.Keys.Count != rightDict.Keys.Count)
+                {
+                    return false;
+                }
+
+                foreach(var key in leftDict.Keys)
+                {
+                    if (!rightDict.Contains(key) || !rightDict[key].Equals(leftDict[key]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
 
             var leftEnumerable = left.Cast<object>();
             var rightEnumerable = right.Cast<object>();
@@ -44,6 +66,19 @@
             if (ReferenceEquals(null, obj))
             {
                 return 0;
+            }
+
+            if (typeof(IDictionary).GetTypeInfo().IsAssignableFrom(typeof(T)))
+            {
+                IDictionary dict = (IDictionary)obj;
+
+                var value = dict.Keys.Cast<object>().ToDictionary(k => k, k => dict[k])
+                                .Select(p => new KeyValuePair<int, int>(p.Key.GetHashCode(), p.Value?.GetHashCode() ?? 0))
+                                .OrderBy(p => p.Key).ThenBy(p => p.Value);
+                unchecked
+                {
+                    return value.Aggregate(17, (current, p) => (((current * 486187739) ^ p.Key) * 486187739) ^ p.Value);
+                }
             }
 
             unchecked
