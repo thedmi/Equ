@@ -1,19 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.5</TargetFramework>
-    <AssemblyVersion>2.0.2</AssemblyVersion>
-    <FileVersion>2.0.2</FileVersion>
-    <Version>2.0.2</Version>
-    <Authors>Dani Michel</Authors>
-    <Company>Dani Michel</Company>
+    <TargetFrameworks>netstandard1.5;netstandard2.0</TargetFrameworks>
+    <AssemblyVersion>2.0.4</AssemblyVersion>
+    <FileVersion>2.0.4</FileVersion>
+    <Version>2.0.4</Version>
+    <Authors>Devon Richards</Authors>
+    <Company>Devon Richards</Company>
     <Description>Fast, convention-based, zero-code equality functions</Description>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/thedmi/Equ</PackageProjectUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ruler501/Equ</PackageProjectUrl>
     <PackageTags>equality, iequatable, generator</PackageTags>
-    <Copyright>Dani Michel</Copyright>
-    <PackageReleaseNotes>See https://github.com/thedmi/Equ/blob/master/ReleaseNotes.md</PackageReleaseNotes>
+    <Copyright>Devon Richards</Copyright>
+    <PackageReleaseNotes>See https://github.com/ruler501/Equ/blob/master/ReleaseNotes.md</PackageReleaseNotes>
+    <PackageId>ruler501.Equ</PackageId>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/ruler501/Equ</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
