@@ -3,6 +3,14 @@ Equ Releases
 
 *Equ uses [SemVer](http://semver.org/) as versioning scheme.*
 
+## 2.1.0
+
+- [PR #19](https://github.com/thedmi/Equ/pull/19) The assembly has now a strong name. Thanks to @gasparnagy for the PR.
+- [PR #18](https://github.com/thedmi/Equ/pull/18) Target `netstandard2.0` in addition to the previous `netstandard1.5`.
+- [PR #17](https://github.com/thedmi/Equ/pull/17) Indexers are now ignored. The data that indexers expose is typically contained in fields anyway, so the value objects semantics are preserved.
+- [PR #16](https://github.com/thedmi/Equ/pull/16) The equality comparison for dictionaries and sets disregards the order now.
+
+
 ## 2.0.2
 
 - [PR #6](https://github.com/thedmi/Equ/pull/6) `ElementwiseSequenceEqualityComparer.GetHashCode()` handles now `null` values correctly. Thanks to **zgabi** for the PR.
