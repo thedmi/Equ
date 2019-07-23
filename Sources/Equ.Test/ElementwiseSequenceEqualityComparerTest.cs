@@ -104,10 +104,22 @@
         }
         
         [Fact]
-        public void Different_dictionaries_are_reported_unequal()
+        public void Different_dictionaries_by_value_are_reported_unequal()
         {
             var dict1 = new Dictionary<int, string> { { 1, "a" }, { 2, "b" } };
             var dict2 = new Dictionary<int, string> { { 1, "a" }, { 2, "c" } };
+            
+            var comparer = new ElementwiseSequenceEqualityComparer<IDictionary>();
+            
+            Assert.False(comparer.Equals(dict1, dict2));
+            Assert.NotEqual(comparer.GetHashCode(dict1), comparer.GetHashCode(dict2));
+        }
+        
+        [Fact]
+        public void Different_dictionaries_by_key_are_reported_unequal()
+        {
+            var dict1 = new Dictionary<int, string> { { 1, "a" }, { 2, "b" } };
+            var dict2 = new Dictionary<int, string> { { 1, "a" }, { 3, "b" } };
             
             var comparer = new ElementwiseSequenceEqualityComparer<IDictionary>();
             
