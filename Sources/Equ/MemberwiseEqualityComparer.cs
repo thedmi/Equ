@@ -64,7 +64,7 @@
 
         private static IEnumerable<PropertyInfo> AllPropertiesExceptIgnored(Type t)
         {
-            return t.GetTypeInfo().GetProperties(AllInstanceMembers).Where(IsNotMarkedAsIgnore);
+            return t.GetTypeInfo().GetProperties(AllInstanceMembers).Where(info => IsNotMarkedAsIgnore(info) && IsNotIndexed(info));
         }
 
         private static BindingFlags AllInstanceMembers
@@ -80,6 +80,13 @@
             var isPropertyIgnored = propertyInfo != null && propertyInfo.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Any();
 
             return !isSelfIgnored && !isPropertyIgnored;
+        }
+
+        private static bool IsNotIndexed(PropertyInfo propertyInfo)
+        {
+            var indexParamaters = propertyInfo.GetIndexParameters();
+
+            return indexParamaters.Count() == 0;
         }
 
         private static PropertyInfo GetPropertyForBackingField(MemberInfo memberInfo)
