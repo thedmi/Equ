@@ -14,6 +14,8 @@
     <PackageTags>equality, iequatable, generator</PackageTags>
     <Copyright>Dani Michel</Copyright>
     <PackageReleaseNotes>See https://github.com/thedmi/Equ/blob/master/ReleaseNotes.md</PackageReleaseNotes>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
 </Project>
