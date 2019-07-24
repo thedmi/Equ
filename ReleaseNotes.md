@@ -7,8 +7,8 @@ Equ Releases
 
 - [PR #19](https://github.com/thedmi/Equ/pull/19) The assembly has now a strong name. Thanks to @gasparnagy for the PR.
 - [PR #18](https://github.com/thedmi/Equ/pull/18) Target `netstandard2.0` in addition to the previous `netstandard1.5`.
-- [PR #17](https://github.com/thedmi/Equ/pull/17) Indexers are now ignored. The data that indexers expose is typically contained in fields anyway, so the value objects semantics are preserved.
-- [PR #16](https://github.com/thedmi/Equ/pull/16) The equality comparison for dictionaries and sets disregards the order now.
+- [PR #17](https://github.com/thedmi/Equ/pull/17) Indexers are now ignored. The data that indexers expose is typically contained in fields anyway, so the value objects semantics are preserved. Thanks to @ruler501 for the PR.
+- [PR #16](https://github.com/thedmi/Equ/pull/16) The equality comparison for dictionaries and sets disregards the order now. Thanks to @ruler501 for the initial implementation.
 
 
 ## 2.0.2
