@@ -106,11 +106,10 @@ namespace Equ
                 var boxedRightMemberExpr = Expression.Convert(rightMemberExpr, typeof(object));
                 return MakeReferenceTypeEqualExpression(boxedLeftMemberExpr, boxedRightMemberExpr);
             }
-            if (IsSequenceType(memberType))
-            {
-                return MakeSequenceTypeEqualExpression(leftMemberExpr, rightMemberExpr, memberType);
-            }
-            return MakeReferenceTypeEqualExpression(leftMemberExpr, rightMemberExpr);
+
+            return ReflectionUtils.IsSequenceType(memberType)
+                ? MakeSequenceTypeEqualExpression(leftMemberExpr, rightMemberExpr, memberType)
+                : MakeReferenceTypeEqualExpression(leftMemberExpr, rightMemberExpr);
         }
 
         private static Expression MakeSequenceTypeEqualExpression(Expression left, Expression right, Type enumerableType)
@@ -130,7 +129,7 @@ namespace Equ
 
             var memberType = memberAccessExpr.Type;
 
-            var getHashCodeExpr = IsSequenceType(memberType)
+            var getHashCodeExpr = ReflectionUtils.IsSequenceType(memberType)
                 ? MakeCallOnSequenceEqualityComparerExpression("GetHashCode", memberType, memberAccessExpr)
                 : Expression.Call(memberAccessAsObjExpr, "GetHashCode", Type.EmptyTypes);
 
@@ -147,11 +146,6 @@ namespace Equ
             var comparerExpr = Expression.Constant(comparerInstance);
 
             return Expression.Call(comparerExpr, methodName, Type.EmptyTypes, parameterExpressions);
-        }
-
-        private static bool IsSequenceType(Type type)
-        {
-            return typeof(IEnumerable).GetTypeInfo().IsAssignableFrom(type) && type != typeof(string);
         }
     }
 }
