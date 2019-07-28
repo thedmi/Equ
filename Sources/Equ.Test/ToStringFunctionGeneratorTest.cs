@@ -1,25 +1,11 @@
 namespace Equ.Test
 {
-    using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Reflection;
-    using System.Text.RegularExpressions;
 
     using Xunit;
-    using Xunit.Abstractions;
 
     public class ToStringFunctionGeneratorTest
     {
-        private readonly ITestOutputHelper _output;
-
-        public ToStringFunctionGeneratorTest(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Fact]
         public void String_representations_contain_all_information()
         {
@@ -36,11 +22,17 @@ namespace Equ.Test
         }
 
         [Fact]
-        public void Null_values_are_converted_to_null_strings()
+        public void Null_fields_are_converted_to_null_strings()
         {
             var obj = new SomeType1(0, null, null, null, null);
             
-            Assert.Equal("", obj.ToString());
+            Assert.Equal("{ _anIntegerArray: ∅, _aDictionary: ∅, SomeInteger: 0, SomeString: ∅, SomeType2S: ∅ }", obj.ToString());
+        }
+
+        [Fact]
+        public void Null_instances_are_converted_to_null_strings()
+        {
+            Assert.Equal("∅", Stringify<SomeType1>.With(null));
         }
         
         // ReSharper disable UnusedAutoPropertyAccessor.Local

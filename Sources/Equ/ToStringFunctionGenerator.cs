@@ -34,7 +34,13 @@ namespace Equ
             var toStringInputParam = Expression.Parameter(typeof(object));
             var concatExpr = AsObjectString(fields.Select(f => FieldStringRepresentation(f, toStringInputParam)).ToArray());
 
-            return Expression.Lambda<Func<object, string>>(concatExpr, toStringInputParam).Compile();
+            // Wrap in null check for cases where the input param is already null
+            var ifNotNullExpr = Expression.Condition(
+                Expression.Equal(toStringInputParam, Expression.Constant(null)),
+                Expression.Constant("∅"),
+                concatExpr);
+            
+            return Expression.Lambda<Func<object, string>>(ifNotNullExpr, toStringInputParam).Compile();
         }
         
         /// <summary>
@@ -53,19 +59,30 @@ namespace Equ
             var typedInstance = Expression.Convert(instance, _type);
             var fieldAccess = Expression.MakeMemberAccess(typedInstance, field);
 
-            if (ReflectionUtils.IsSequenceType(field.FieldType))
+            var fieldValue = FieldStringValue(fieldAccess, field.FieldType);
+            
+            // Wrap in null check expression
+            return Expression.Condition(
+                Expression.Equal(Expression.Convert(fieldAccess, typeof(object)), Expression.Constant(null)),
+                Expression.Constant("∅"),
+                fieldValue);
+        }
+
+        private static Expression FieldStringValue(Expression fieldAccess, Type fieldType)
+        {
+            if (ReflectionUtils.IsSequenceType(fieldType))
             {
                 // The field is a sequence, so call ToString on each element and concatenate
                 var enumerableToStringExpr = (Expression<Func<IEnumerable, string>>)(xs =>
                     "[ " + string.Join(", ", xs.Cast<object>().Select(x => x.ToString())) + " ]");
-                
+
                 return Expression.Invoke(enumerableToStringExpr, fieldAccess);
             }
-            
+
             // The field is a scalar, so just call ToString on it
             return Expression.Call(Expression.Convert(fieldAccess, typeof(object)), _objectToStringMethod);
         }
-        
+
         /// <summary>
         /// Concatenates the individual string expressions and encloses them in curly braces.
         /// </summary>
