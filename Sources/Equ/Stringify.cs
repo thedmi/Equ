@@ -2,9 +2,12 @@ namespace Equ
 {
     using System;
 
+    /// <summary>
+    /// Convenience wrapper around <see cref="ToStringFunctionGenerator"/>. *This is currently experimental.*
+    /// </summary>
     public static class Stringify<T>
     {
-        // This is a static field on purpose to make it initialize at static initialization time
+        // This is deliberately a static field to make it initialize at static initialization time
         private static readonly Func<object, string> _toStringMethod = new ToStringFunctionGenerator(typeof(T)).MakeToStringMethod();
 
         /// <summary>

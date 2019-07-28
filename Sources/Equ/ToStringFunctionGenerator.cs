@@ -6,15 +6,18 @@ namespace Equ
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
-    using System.Text.RegularExpressions;
 
+    /// <summary>
+    /// Generator that produces ToString() functions for arbitrary objects. The functions are composed dynamically using reflection,
+    /// but then compiled for high runtime performance.
+    ///
+    /// NOTE: This class is currently experimental.
+    /// </summary>
     public class ToStringFunctionGenerator
     {                
         private static readonly MethodInfo _stringConcatMethod = typeof(string).GetTypeInfo().GetMethod("Concat", new[] { typeof(string[]) });
         
         private static readonly MethodInfo _objectToStringMethod = typeof(object).GetTypeInfo().GetMethod("ToString");
-
-        private static readonly Regex _autoPropertyBackingFieldRegex = new Regex("^<([a-zA-Z][a-zA-Z0-9]*)>k__BackingField$");
 
         private readonly Type _type;
 

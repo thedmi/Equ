@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Provides an implementation of <see cref="IEqualityComparer{T}"/> that performs memberwise
