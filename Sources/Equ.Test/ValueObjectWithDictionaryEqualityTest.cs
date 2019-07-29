@@ -3,8 +3,6 @@ namespace Equ.Test
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
 
-    using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-
     using Xunit;
 
     public class ValueObjectWithDictionaryEqualityTest

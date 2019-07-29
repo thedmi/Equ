@@ -145,8 +145,6 @@ namespace Equ.Test
             Assert.Equal(v1, v2);
         }
 
-        // TODO Add sequence equality tests
-
         // ReSharper disable NotAccessedField.Local
         private class ValueType : MemberwiseEquatable<ValueType>
         {

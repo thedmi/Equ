@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Provides an implementation of <see cref="IEqualityComparer{T}"/> that performs memberwise
@@ -17,9 +16,6 @@
     /// </summary>
     public class MemberwiseEqualityComparer<T> : IEqualityComparer<T>
     {
-        // ReSharper disable once StaticMemberInGenericType
-        private static readonly Regex _autoPropertyBackingFieldRegex = new Regex("^<([a-zA-Z][a-zA-Z0-9]*)>k__BackingField$");
-
         private readonly Func<object, object, bool> _equalsFunc;
 
         private readonly Func<object, int> _getHashCodeFunc;
@@ -67,17 +63,15 @@
             return t.GetTypeInfo().GetProperties(AllInstanceMembers).Where(info => IsNotMarkedAsIgnore(info) && IsNotIndexed(info));
         }
 
-        private static BindingFlags AllInstanceMembers
-        {
-            get { return BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic; }
-        }
+        private static BindingFlags AllInstanceMembers => BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         private static bool IsNotMarkedAsIgnore(MemberInfo memberInfo)
         {
             var isSelfIgnored = memberInfo.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Any();
 
-            var propertyInfo = GetPropertyForBackingField(memberInfo);
-            var isPropertyIgnored = propertyInfo != null && propertyInfo.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Any();
+            var propertyInfo = ReflectionUtils.GetPropertyForBackingField(memberInfo);
+            var isPropertyIgnored = propertyInfo != null
+                                    && propertyInfo.GetCustomAttributes(typeof(MemberwiseEqualityIgnoreAttribute), true).Any();
 
             return !isSelfIgnored && !isPropertyIgnored;
         }
@@ -86,22 +80,7 @@
         {
             var indexParamaters = propertyInfo.GetIndexParameters();
 
-            return indexParamaters.Count() == 0;
-        }
-
-        private static PropertyInfo GetPropertyForBackingField(MemberInfo memberInfo)
-        {
-            if (memberInfo is FieldInfo && _autoPropertyBackingFieldRegex.IsMatch(memberInfo.Name))
-            {
-                var match = _autoPropertyBackingFieldRegex.Match(memberInfo.Name);
-                if (match.Success && match.Groups.Count >= 2 && match.Groups[1].Captures.Count >= 1)
-                {
-                    var propertyName = match.Groups[1].Captures[0].Value;
-                    return memberInfo.DeclaringType.GetTypeInfo().GetProperties().SingleOrDefault(p => p.Name == propertyName);
-                }
-            }
-
-            return null;
+            return !indexParamaters.Any();
         }
 
         /// <summary>
