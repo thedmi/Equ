@@ -6,15 +6,22 @@
 Equ
 ====
 
-Equ is a *.NET Standard* library that provides fast, convention-based equality operations for your types. This is primarily useful for custom value types (in the sense of the [value object pattern](http://en.wikipedia.org/wiki/Value_object), not in the sense of `struct`). Such types are sometimes also called "records".
+Equ is a *.NET Standard* library that provides fast, convention-based equality operations for your types. This is primarily useful for custom value types (in the sense of the [value object pattern](http://en.wikipedia.org/wiki/Value_object), not in the sense of `struct`). This is similar to C# 9 records, but extends the concept to enumerable members.
 
 Members participating in equality operations are resolved through reflection, the resulting equality operations are then stored as compiled expression using LINQ expression trees. This makes the runtime performance as fast as with a manual implementation.
+
+Compared to C# 9 records, this library adds the following functionality:
+
+- Compare sequences by value, too.
+- Exclude members from comparison through attributes.
+- Extend comparison without having to re-implement boiler plate.
 
 Grab the NuGet [here](https://www.nuget.org/packages/Equ/).
 
 
 Usage
 ----------
+
 
 ### Simple Scenarios
 
@@ -59,6 +66,28 @@ new Person("Sherlock", new Address("Baker Street", "London")) == new Person("She
 ```
 
 This works because `MemberwiseEquatable` provides an overload for the `==` operator that eventually *compares all private fields* of the objects in question (note that auto properties have compiler-generated backing fields).
+
+
+#### With C# 9 Records
+
+Since records already provides the basis for value types, it makes sense to use them if C# 9 is available in your project. However, C# 9 records are problematic when enumerable members are used, because they perform a reference comparison in that case. This breaks compositional integrity, but Equ can fix this. However, records cannot inherit from `MemberwiseEquatable` as in the example above, so there is a different way:
+
+```csharp
+record Person(string Name, IReadOnlyList<Address> Addresses)
+{
+    // Redefine Equals() and GetHashCode() so that Equ is used
+    public virtual bool Equals(Person other) => EquCompare<Person>.Equals(this, other);
+    public override int GetHashCode() => EquCompare<Person>.GetHashCode(this);
+}
+
+record Address(string Street, string City) { }
+```
+
+Now the following expression evaluates to true, which it wouldn't with plain records:
+
+```csharp
+new Person("Sherlock", new [] { new Address("Baker Street", "London") }) == new Person("Sherlock", new [] { new Address("Baker Street", "London") })
+```
 
 
 ### Excluding Members from Equality Comparison
@@ -144,6 +173,8 @@ At the core of Equ lives the `EqualityFunctionGenerator`, which is responsible f
 - For sequence-typed members, a call to an appropriate `ElementwiseSequenceEqualityComparer<T>` is generated
 
 The `ElementwiseSequenceEqualityComparer<T>` is basically just a wrapper around `Enumerable.SequenceEqual()` with additional null checks.
+
+C# 9 records do the same, except that they don't consider sequence-typed members.
 
 ## Release Notes
 

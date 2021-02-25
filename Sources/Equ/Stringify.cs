@@ -3,7 +3,7 @@ namespace Equ
     using System;
 
     /// <summary>
-    /// Convenience wrapper around <see cref="ToStringFunctionGenerator"/>. *This is currently experimental.*
+    /// Convenience wrapper around <see cref="ToStringFunctionGenerator"/>.
     /// </summary>
     public static class Stringify<T>
     {
