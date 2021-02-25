@@ -1,5 +1,6 @@
 ﻿namespace Equ
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +14,19 @@
     /// <typeparam name="T">The type of the enumerable, i.e. a type implementing <see cref="IEnumerable"/></typeparam>
     public class ElementwiseSequenceEqualityComparer<T> : EqualityComparer<T> where T : IEnumerable
     {
+#if NETSTANDARD2_0
+        private static readonly MethodInfo SequenceEqualsMethodInfo = typeof(Enumerable)
+            .GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public)
+            .Where(methodInfo => methodInfo.Name.Equals(nameof(Enumerable.SequenceEqual)) && methodInfo.GetParameters().Length == 3)
+            .Single();
+
+        private static readonly Type EnumerableType = typeof(T).IsGenericType ? typeof(T).GetGenericArguments().Single() : null;
+        private static readonly Type MemberwiseEqualityComparerType = typeof(MemberwiseEqualityComparer<>);
+#else
+        private static readonly Type EnumerableType = null;
+#endif
+
+
         // ReSharper disable once UnusedMember.Global
         public new static ElementwiseSequenceEqualityComparer<T> Default => new ElementwiseSequenceEqualityComparer<T>();
 
@@ -34,12 +48,36 @@
                 return false;
             }
 
-            var leftEnumerable = left.Cast<object>();
-            var rightEnumerable = right.Cast<object>();
-            
-            return _typeHasDefinedOrder ? leftEnumerable.SequenceEqual(rightEnumerable) : ScrambledEquals(leftEnumerable, rightEnumerable);
+            return _typeHasDefinedOrder ? SequenceEqual(left, right) : ScrambledEquals(left, right);
         }
 
+#if NETSTANDARD2_0
+        private bool SequenceEqual(IEnumerable left, IEnumerable right)
+        {
+            if (EnumerableType != null)
+            {
+                var equalityComparerType = MemberwiseEqualityComparerType.MakeGenericType(EnumerableType);
+                var equalityComparer = equalityComparerType.GetProperty(nameof(MemberwiseEqualityComparer<object>.ByProperties), BindingFlags.Static | BindingFlags.Public).GetValue(null);
+                var sequenceEquals = SequenceEqualsMethodInfo.MakeGenericMethod(EnumerableType);
+                var result = (bool)sequenceEquals.Invoke(null, new [] { left, right, equalityComparer });
+
+                return result;
+            }
+            else
+            {
+                var leftEnumerable = left.Cast<object>();
+                var rightEnumerable = right.Cast<object>();
+                return leftEnumerable.SequenceEqual(rightEnumerable);
+            }
+        }
+#else
+        private bool SequenceEqual(IEnumerable left, IEnumerable right)
+        {
+            var leftEnumerable = left.Cast<object>();
+            var rightEnumerable = right.Cast<object>();
+            return leftEnumerable.SequenceEqual(rightEnumerable);
+        }
+#endif
         public override int GetHashCode(T obj)
         {
             if (ReferenceEquals(null, obj))
@@ -96,6 +134,14 @@
             
             // Sets don't have a non-generic base type
             return type.IsGenericType && typeof(ISet<>).GetTypeInfo().IsAssignableFrom(type.GetGenericTypeDefinition());
+        }
+
+        private static bool ScrambledEquals(IEnumerable left, IEnumerable right)
+        {
+            var leftEnumerable = left.Cast<object>();
+            var rightEnumerable = right.Cast<object>();
+
+            return ScrambledEquals(leftEnumerable, rightEnumerable);
         }
 
         private static bool ScrambledEquals<TElem>(IEnumerable<TElem> list1, IEnumerable<TElem> list2)
