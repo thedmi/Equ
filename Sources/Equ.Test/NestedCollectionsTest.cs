@@ -26,49 +26,49 @@ namespace Equ.Test
 
         public static IEnumerable<object[]> ShouldDetermineCorrectEqualityTests => new List<object[]>
         {
-            //new object[] { new Container(), new Container(), MemberwiseEqualityComparer<Container>.ByProperties, true },
-            //new object[] {
-            //    new Container { Items = new List<Level1>() },
-            //    new Container { }, 
-            //    MemberwiseEqualityComparer<Container>.ByProperties,
-            //    false
-            //},
-            //new object[] {
-            //    new Container { Items = new List<Level1>() },
-            //    new Container { Items = new List<Level1>() },
-            //    MemberwiseEqualityComparer<Container>.ByProperties,
-            //    true
-            //},
-            //new object[] {
-            //    new Container { Items = new List<Level1>() },
-            //    new Container { Items = Array.Empty<Level1>() },
-            //    MemberwiseEqualityComparer<Container>.ByProperties,
-            //    true
-            //},
-            //new object[] {
-            //    new Container { Items = new [] { new Level1() } },
-            //    new Container { Items = Array.Empty<Level1>() },
-            //    MemberwiseEqualityComparer<Container>.ByProperties,
-            //    false
-            //},
-            //new object[] {
-            //    new Container { Items = new [] { new Level1() } },
-            //    new Container { Items = new [] { new Level1() } },
-            //    MemberwiseEqualityComparer<Container>.ByProperties,
-            //    false
-            //},
-            //new object[] {
-            //    new Container { Items = new [] { new Level1() } },
-            //    new Container { Items = new [] { new Level1() } },
-            //    MemberwiseEqualityComparer<Container>.ByPropertiesRecursive,
-            //    true
-            //},
-            //new object[] {
-            //    new Container { Items = new [] { new Level1 { Items = new[] { new Level2() } } } },
-            //    new Container { Items = new [] { new Level1 { Items = new[] { new Level2() } } } },
-            //    MemberwiseEqualityComparer<Container>.ByProperties,
-            //    false
-            //},
+            new object[] { new Container(), new Container(), MemberwiseEqualityComparer<Container>.ByProperties, true },
+            new object[] {
+                new Container { Items = new List<Level1>() },
+                new Container { },
+                MemberwiseEqualityComparer<Container>.ByProperties,
+                false
+            },
+            new object[] {
+                new Container { Items = new List<Level1>() },
+                new Container { Items = new List<Level1>() },
+                MemberwiseEqualityComparer<Container>.ByProperties,
+                true
+            },
+            new object[] {
+                new Container { Items = new List<Level1>() },
+                new Container { Items = Array.Empty<Level1>() },
+                MemberwiseEqualityComparer<Container>.ByProperties,
+                true
+            },
+            new object[] {
+                new Container { Items = new [] { new Level1() } },
+                new Container { Items = Array.Empty<Level1>() },
+                MemberwiseEqualityComparer<Container>.ByProperties,
+                false
+            },
+            new object[] {
+                new Container { Items = new [] { new Level1() } },
+                new Container { Items = new [] { new Level1() } },
+                MemberwiseEqualityComparer<Container>.ByProperties,
+                false
+            },
+            new object[] {
+                new Container { Items = new [] { new Level1() } },
+                new Container { Items = new [] { new Level1() } },
+                MemberwiseEqualityComparer<Container>.ByPropertiesRecursive,
+                true
+            },
+            new object[] {
+                new Container { Items = new [] { new Level1 { Items = new[] { new Level2() } } } },
+                new Container { Items = new [] { new Level1 { Items = new[] { new Level2() } } } },
+                MemberwiseEqualityComparer<Container>.ByProperties,
+                false
+            },
             new object[] {
                 new Container { Items = new [] { new Level1 { Items = new[] { new Level2() } } } },
                 new Container { Items = new [] { new Level1 { Items = new[] { new Level2() } } } },
