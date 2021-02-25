@@ -14,46 +14,33 @@
     /// <typeparam name="T">The type of the enumerable, i.e. a type implementing <see cref="IEnumerable"/></typeparam>
     public class ElementwiseSequenceEqualityComparer<T> : EqualityComparer<T> where T : IEnumerable
     {
-        private static Type GetEnumerableType()
-        {
-            var result = typeof(T).GetTypeInfo().GetInterfaces()
-                .Where(type => type.GetTypeInfo().IsGenericType && typeof(IEnumerable<>).GetTypeInfo().IsAssignableFrom(type.GetGenericTypeDefinition()))
-                .SelectMany(type => type.GetTypeInfo().GetGenericArguments())
-                .SingleOrDefault();
+        private static readonly Type EnumerableType = typeof(T)
+            .GetTypeInfo()
+            .GetInterfaces()
+            .Where(type => type.GetTypeInfo().IsGenericType && typeof(IEnumerable<>).GetTypeInfo().IsAssignableFrom(type.GetGenericTypeDefinition()))
+            .SelectMany(type => type.GetTypeInfo().GetGenericArguments())
+            .SingleOrDefault();
 
-            return result;
-        }
+        private static readonly MethodInfo SequenceEqualsMethodInfo = (EnumerableType == null) ? null : typeof(Enumerable)
+            .GetTypeInfo()
+            .GetMethods(BindingFlags.Static | BindingFlags.Public)
+            .Where(methodInfo => methodInfo.Name.Equals(nameof(Enumerable.SequenceEqual)) && methodInfo.GetParameters().Length == 3)
+            .Single()
+            .MakeGenericMethod(EnumerableType);
 
-        private static readonly Type EnumerableType = GetEnumerableType();
+        private static readonly MethodInfo ScrambledEqualsMethodInfo = (EnumerableType == null) ? null : typeof(ElementwiseSequenceEqualityComparer<T>)
+            .GetTypeInfo()
+            .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
+            .Where(methodInfo => methodInfo.Name.Equals(nameof(ElementwiseSequenceEqualityComparer<T>.ScrambledEquals)) && methodInfo.IsGenericMethod)
+            .Single()
+            .MakeGenericMethod(EnumerableType);
 
-        private static MethodInfo GetSequenceEqualsMethodInfo()
-        {
-            var result = typeof(Enumerable)
-                .GetTypeInfo()
-                .GetMethods(BindingFlags.Static | BindingFlags.Public)
-                .Where(methodInfo => methodInfo.Name.Equals(nameof(Enumerable.SequenceEqual)) && methodInfo.GetParameters().Length == 3)
-                .Single();
-
-            return result;
-        }
-
-        private static readonly MethodInfo SequenceEqualsMethodInfo = GetSequenceEqualsMethodInfo();
-
-        private static MethodInfo GetScrambledEqualsMethodInfo()
-        {
-            var result = typeof(ElementwiseSequenceEqualityComparer<T>)
-                .GetTypeInfo()
-                .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-                .Where(methodInfo => methodInfo.Name.Equals(nameof(ElementwiseSequenceEqualityComparer<T>.ScrambledEquals)) && methodInfo.IsGenericMethod)
-                .Single();
-
-            return result;
-        }
-
-        private static readonly MethodInfo ScrambledEqualsMethodInfo = GetScrambledEqualsMethodInfo();
-
-        private static readonly Type MemberwiseEqualityComparerType = typeof(MemberwiseEqualityComparer<>);
-
+        private static readonly object MemberwiseEqualityComparer = (EnumerableType == null) ? null : typeof(MemberwiseEqualityComparer<>)
+            .GetTypeInfo()
+            .MakeGenericType(EnumerableType)
+            .GetTypeInfo()
+            .GetProperty(nameof(MemberwiseEqualityComparer<object>.ByProperties), BindingFlags.Static | BindingFlags.Public)
+            .GetValue(null);
 
         // ReSharper disable once UnusedMember.Global
         public new static ElementwiseSequenceEqualityComparer<T> Default => new ElementwiseSequenceEqualityComparer<T>();
@@ -81,14 +68,9 @@
 
         private bool SequenceEqual(IEnumerable left, IEnumerable right)
         {
-            if (EnumerableType != null)
+            if (EnumerableType != null && !EnumerableType.GetTypeInfo().IsPrimitive)
             {
-                var equalityComparerType = MemberwiseEqualityComparerType.MakeGenericType(EnumerableType);
-                var equalityComparer = equalityComparerType.GetTypeInfo().GetProperty(nameof(MemberwiseEqualityComparer<object>.ByProperties), BindingFlags.Static | BindingFlags.Public).GetValue(null);
-                var sequenceEquals = SequenceEqualsMethodInfo.MakeGenericMethod(EnumerableType);
-                var result = (bool)sequenceEquals.Invoke(null, new [] { left, right, equalityComparer });
-
-                return result;
+                return (bool)SequenceEqualsMethodInfo.Invoke(null, new [] { left, right, MemberwiseEqualityComparer });
             }
             else
             {
@@ -160,12 +142,7 @@
         {
             if (EnumerableType != null && !EnumerableType.GetTypeInfo().IsPrimitive)
             {
-                var equalityComparerType = MemberwiseEqualityComparerType.MakeGenericType(EnumerableType);
-                var equalityComparer = equalityComparerType.GetTypeInfo().GetProperty(nameof(MemberwiseEqualityComparer<object>.ByProperties), BindingFlags.Static | BindingFlags.Public).GetValue(null);
-                var scrambledEquals = ScrambledEqualsMethodInfo.MakeGenericMethod(EnumerableType);
-                var result = (bool) scrambledEquals.Invoke(null, new [] { left, right, equalityComparer }); 
-
-                return result;
+                return (bool)ScrambledEqualsMethodInfo.Invoke(null, new [] { left, right, MemberwiseEqualityComparer });
             }
             else
             {
