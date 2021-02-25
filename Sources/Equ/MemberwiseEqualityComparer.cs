@@ -5,6 +5,15 @@
     using System.Linq;
     using System.Reflection;
 
+    public enum MemberwiseEqualityMode
+    {
+        None,
+        ByFields,
+        ByFieldsRecursive,
+        ByProperties,
+        ByPropertiesRecursive
+    }
+
     /// <summary>
     /// Provides an implementation of <see cref="IEqualityComparer{T}"/> that performs memberwise
     /// equality comparison of objects of type T. Use the <see cref="ByFields"/> or <see cref="ByProperties"/>
@@ -20,27 +29,53 @@
 
         private readonly Func<object, int> _getHashCodeFunc;
 
-        private static readonly Lazy<MemberwiseEqualityComparer<T>> _fieldsComparer =
+        private static readonly Lazy<MemberwiseEqualityComparer<T>> _defaultFieldsComparer =
             new Lazy<MemberwiseEqualityComparer<T>>(
                 () =>
                     new MemberwiseEqualityComparer<T>(
                         new EqualityFunctionGenerator(
                             typeof(T),
                             AllFieldsExceptIgnored,
-                            t => new List<PropertyInfo>())));
+                            t => new List<PropertyInfo>(),
+                            MemberwiseEqualityMode.ByFields)));
 
-        private static readonly Lazy<MemberwiseEqualityComparer<T>> _propertiesComparer =
+        private static readonly Lazy<MemberwiseEqualityComparer<T>> _defaultPropertiesComparer =
             new Lazy<MemberwiseEqualityComparer<T>>(
                 () =>
                     new MemberwiseEqualityComparer<T>(
                         new EqualityFunctionGenerator(
                             typeof(T),
                             t => new List<FieldInfo>(),
-                            AllPropertiesExceptIgnored)));
+                            AllPropertiesExceptIgnored,
+                            MemberwiseEqualityMode.ByProperties)));
 
-        public static MemberwiseEqualityComparer<T> ByFields => _fieldsComparer.Value;
+        private static readonly Lazy<MemberwiseEqualityComparer<T>> _recursiveFieldsComparer =
+            new Lazy<MemberwiseEqualityComparer<T>>(
+                () =>
+                    new MemberwiseEqualityComparer<T>(
+                        new EqualityFunctionGenerator(
+                            typeof(T),
+                            AllFieldsExceptIgnored,
+                            t => new List<PropertyInfo>(),
+                            MemberwiseEqualityMode.ByFieldsRecursive)));
 
-        public static MemberwiseEqualityComparer<T> ByProperties => _propertiesComparer.Value;
+        private static readonly Lazy<MemberwiseEqualityComparer<T>> _recursivePropertiesComparer =
+            new Lazy<MemberwiseEqualityComparer<T>>(
+                () =>
+                    new MemberwiseEqualityComparer<T>(
+                        new EqualityFunctionGenerator(
+                            typeof(T),
+                            t => new List<FieldInfo>(),
+                            AllPropertiesExceptIgnored,
+                            MemberwiseEqualityMode.ByPropertiesRecursive)));
+
+        public static MemberwiseEqualityComparer<T> ByFields => _defaultFieldsComparer.Value;
+
+        public static MemberwiseEqualityComparer<T> ByProperties => _defaultPropertiesComparer.Value;
+
+        public static MemberwiseEqualityComparer<T> ByFieldsRecursive => _recursiveFieldsComparer.Value;
+
+        public static MemberwiseEqualityComparer<T> ByPropertiesRecursive => _recursivePropertiesComparer.Value;
 
         public static MemberwiseEqualityComparer<T> Custom(EqualityFunctionGenerator equalityFunctionGenerator)
         {

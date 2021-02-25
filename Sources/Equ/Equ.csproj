@@ -16,6 +16,7 @@
     <PackageReleaseNotes>See https://github.com/thedmi/Equ/blob/master/ReleaseNotes.md</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\key.snk</AssemblyOriginatorKeyFile>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
 </Project>

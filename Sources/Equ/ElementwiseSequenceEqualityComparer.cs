@@ -35,19 +35,42 @@
             .Single()
             .MakeGenericMethod(EnumerableType);
 
-        private static readonly object MemberwiseEqualityComparer = (EnumerableType == null) ? null : typeof(MemberwiseEqualityComparer<>)
-            .GetTypeInfo()
-            .MakeGenericType(EnumerableType)
-            .GetTypeInfo()
-            .GetProperty(nameof(MemberwiseEqualityComparer<object>.ByProperties), BindingFlags.Static | BindingFlags.Public)
-            .GetValue(null);
-
         // ReSharper disable once UnusedMember.Global
-        public new static ElementwiseSequenceEqualityComparer<T> Default => new ElementwiseSequenceEqualityComparer<T>();
+        public new static ElementwiseSequenceEqualityComparer<T> Default => new ElementwiseSequenceEqualityComparer<T>(MemberwiseEqualityMode.None);
+        public static ElementwiseSequenceEqualityComparer<T> ByFieldsRecursive => new ElementwiseSequenceEqualityComparer<T>(MemberwiseEqualityMode.ByFieldsRecursive);
+        public static ElementwiseSequenceEqualityComparer<T> ByPropertiesRecursive => new ElementwiseSequenceEqualityComparer<T>(MemberwiseEqualityMode.ByPropertiesRecursive);
 
         // ReSharper disable once StaticMemberInGenericType
         private static readonly bool _typeHasDefinedOrder = !IsDictionaryType() && !IsSetType();
-        
+
+        private bool _recursive;
+        private Lazy<object> _memberwiseEqualityComparer;
+
+        public ElementwiseSequenceEqualityComparer() : this(MemberwiseEqualityMode.None) { }
+
+        internal ElementwiseSequenceEqualityComparer(MemberwiseEqualityMode mode)
+        {
+            _recursive = (mode == MemberwiseEqualityMode.ByFieldsRecursive || mode == MemberwiseEqualityMode.ByPropertiesRecursive);
+            _memberwiseEqualityComparer = new Lazy<object>(() => CreateMemberwiseEqualityComparer(mode));
+        }
+
+        private object CreateMemberwiseEqualityComparer(MemberwiseEqualityMode mode)
+        {
+            var propertyName = mode switch
+            {
+                MemberwiseEqualityMode.ByFieldsRecursive => nameof(MemberwiseEqualityComparer<object>.ByFieldsRecursive),
+                MemberwiseEqualityMode.ByPropertiesRecursive => nameof(MemberwiseEqualityComparer<object>.ByPropertiesRecursive),
+                _ => nameof(MemberwiseEqualityComparer<object>.ByProperties)
+            };
+
+            return typeof(MemberwiseEqualityComparer<>)
+                .GetTypeInfo()
+                .MakeGenericType(EnumerableType)
+                .GetTypeInfo()
+                .GetProperty(propertyName, BindingFlags.Static | BindingFlags.Public)
+                .GetValue(null);
+        }
+
         public override bool Equals(T left, T right)
         {
             if (ReferenceEquals(left, right))
@@ -68,9 +91,9 @@
 
         private bool SequenceEqual(IEnumerable left, IEnumerable right)
         {
-            if (EnumerableType != null && !EnumerableType.GetTypeInfo().IsPrimitive)
+            if (_recursive && EnumerableType != null && !EnumerableType.GetTypeInfo().IsPrimitive)
             {
-                return (bool)SequenceEqualsMethodInfo.Invoke(null, new [] { left, right, MemberwiseEqualityComparer });
+                return (bool)SequenceEqualsMethodInfo.Invoke(null, new [] { left, right, _memberwiseEqualityComparer.Value });
             }
             else
             {
@@ -138,11 +161,11 @@
             return type.IsGenericType && typeof(ISet<>).GetTypeInfo().IsAssignableFrom(type.GetGenericTypeDefinition());
         }
 
-        private static bool ScrambledEquals(IEnumerable left, IEnumerable right)
+        private bool ScrambledEquals(IEnumerable left, IEnumerable right)
         {
-            if (EnumerableType != null && !EnumerableType.GetTypeInfo().IsPrimitive)
+            if (_recursive && EnumerableType != null && !EnumerableType.GetTypeInfo().IsPrimitive)
             {
-                return (bool)ScrambledEqualsMethodInfo.Invoke(null, new [] { left, right, MemberwiseEqualityComparer });
+                return (bool)ScrambledEqualsMethodInfo.Invoke(null, new [] { left, right, _memberwiseEqualityComparer.Value });
             }
             else
             {
