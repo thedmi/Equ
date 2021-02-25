@@ -3,6 +3,17 @@ Equ Releases
 
 *Equ uses [SemVer](http://semver.org/) as versioning scheme.*
 
+
+## 2.3.0
+
+- [PR #24](https://github.com/thedmi/Equ/pull/24) Better integration with C# 9 record types through `EquCompare<T>`.
+
+
+## 2.2.0
+
+- [PR #21](https://github.com/thedmi/Equ/pull/21) The member resolution logic of Equ can now also be used for ToString() generation.
+
+
 ## 2.1.0
 
 - [PR #19](https://github.com/thedmi/Equ/pull/19) The assembly has now a strong name. Thanks to @gasparnagy for the PR.
