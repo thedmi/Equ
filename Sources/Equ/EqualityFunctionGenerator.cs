@@ -16,9 +16,8 @@ namespace Equ
         private readonly Type _type;
 
         private readonly Func<Type, IEnumerable<FieldInfo>> _fieldSelector;
-
         private readonly Func<Type, IEnumerable<PropertyInfo>> _propertySelector;
-
+        private readonly string _memberwiseEqualityComparerProperty;
         private readonly string _elementwiseSequenceEqualityComparerProperty;
 
         /// <summary>
@@ -34,6 +33,16 @@ namespace Equ
             _type = type;
             _fieldSelector = fieldSelector;
             _propertySelector = propertySelector;
+
+            _memberwiseEqualityComparerProperty = mode switch
+            {
+                MemberwiseEqualityMode.ByFields => nameof(MemberwiseEqualityComparer<object>.ByFields),
+                MemberwiseEqualityMode.ByFieldsRecursive => nameof(MemberwiseEqualityComparer<object>.ByFieldsRecursive),
+                MemberwiseEqualityMode.ByProperties => nameof(MemberwiseEqualityComparer<object>.ByProperties),
+                MemberwiseEqualityMode.ByPropertiesRecursive => nameof(MemberwiseEqualityComparer<object>.ByPropertiesRecursive),
+                _ => string.Empty
+            };
+
             _elementwiseSequenceEqualityComparerProperty = mode switch
             {
                 MemberwiseEqualityMode.ByFieldsRecursive => nameof(ElementwiseSequenceEqualityComparer<IEnumerable<object>>.ByFieldsRecursive),
@@ -76,7 +85,7 @@ namespace Equ
             var rightParam = Expression.Convert(rightRaw, _type);
 
             // AND expression using short-circuit evaluation
-            var equalsExprs = GetIncludedMembers(_type).Select(mi => MakeEqualsExpression(mi, leftParam, rightParam, _elementwiseSequenceEqualityComparerProperty));
+            var equalsExprs = GetIncludedMembers(_type).Select(mi => MakeEqualsExpression(mi, leftParam, rightParam, _memberwiseEqualityComparerProperty, _elementwiseSequenceEqualityComparerProperty));
             var andChainExpr = equalsExprs.Aggregate((Expression)Expression.Constant(true), Expression.AndAlso);
 
             // call Object.Equals if second parameter doesn't match type
@@ -100,7 +109,7 @@ namespace Equ
             return Expression.ExclusiveOr(leftMultiplied, right);
         }
 
-        private static Expression MakeEqualsExpression(MemberInfo member, Expression left, Expression right, string elementwiseSequenceEqualityComparerProperty)
+        private static Expression MakeEqualsExpression(MemberInfo member, Expression left, Expression right, string memberwiseEqualityComparerProperty, string elementwiseSequenceEqualityComparerProperty)
         {
             var leftMemberExpr = Expression.MakeMemberAccess(left, member);
             var rightMemberExpr = Expression.MakeMemberAccess(right, member);
@@ -111,12 +120,12 @@ namespace Equ
             {
                 var boxedLeftMemberExpr = Expression.Convert(leftMemberExpr, typeof(object));
                 var boxedRightMemberExpr = Expression.Convert(rightMemberExpr, typeof(object));
-                return MakeReferenceTypeEqualExpression(boxedLeftMemberExpr, boxedRightMemberExpr);
+                return MakeReferenceTypeEqualExpression(boxedLeftMemberExpr, boxedRightMemberExpr, memberType, string.Empty);
             }
 
             return ReflectionUtils.IsSequenceType(memberType)
                 ? MakeSequenceTypeEqualExpression(leftMemberExpr, rightMemberExpr, memberType, elementwiseSequenceEqualityComparerProperty)
-                : MakeReferenceTypeEqualExpression(leftMemberExpr, rightMemberExpr);
+                : MakeReferenceTypeEqualExpression(leftMemberExpr, rightMemberExpr, memberType, memberwiseEqualityComparerProperty);
         }
 
         private static Expression MakeSequenceTypeEqualExpression(Expression left, Expression right, Type enumerableType, string elementwiseSequenceEqualityComparerProperty)
@@ -124,9 +133,17 @@ namespace Equ
             return MakeCallOnSequenceEqualityComparerExpression("Equals", enumerableType, elementwiseSequenceEqualityComparerProperty, left, right);
         }
 
-        private static Expression MakeReferenceTypeEqualExpression(Expression left, Expression right)
+        private static Expression MakeReferenceTypeEqualExpression(Expression left, Expression right, Type memberType, string memberwiseEqualityComparerProperty)
         {
-            return Expression.Call(_objectEqualsMethod, left, right);
+            if (nameof(MemberwiseEqualityComparer<object>.ByFieldsRecursive).Equals(memberwiseEqualityComparerProperty)
+             || nameof(MemberwiseEqualityComparer<object>.ByPropertiesRecursive).Equals(memberwiseEqualityComparerProperty))
+            {
+                return MakeCallOnMemberwiseEqualityComparerExpression("Equals", memberType, memberwiseEqualityComparerProperty, left, right);
+            }
+            else
+            {
+                return Expression.Call(_objectEqualsMethod, left, right);
+            }
         }
 
         private static Expression MakeGetHashCodeExpression(MemberInfo member, Expression obj, string elementwiseSequenceEqualityComparerProperty)
@@ -150,6 +167,15 @@ namespace Equ
         {
             var comparerType = typeof(ElementwiseSequenceEqualityComparer<>).MakeGenericType(enumerableType);
             var comparerInstance = comparerType.GetTypeInfo().GetProperty(elementwiseSequenceEqualityComparerProperty, BindingFlags.Static | BindingFlags.Public).GetValue(null);
+            var comparerExpr = Expression.Constant(comparerInstance);
+
+            return Expression.Call(comparerExpr, methodName, Type.EmptyTypes, parameterExpressions);
+        }
+
+        private static Expression MakeCallOnMemberwiseEqualityComparerExpression(string methodName, Type enumerableType, string memberwiseEqualityComparerProperty, params Expression[] parameterExpressions)
+        {
+            var comparerType = typeof(MemberwiseEqualityComparer<>).MakeGenericType(enumerableType);
+            var comparerInstance = comparerType.GetTypeInfo().GetProperty(memberwiseEqualityComparerProperty, BindingFlags.Static | BindingFlags.Public).GetValue(null);
             var comparerExpr = Expression.Constant(comparerInstance);
 
             return Expression.Call(comparerExpr, methodName, Type.EmptyTypes, parameterExpressions);
