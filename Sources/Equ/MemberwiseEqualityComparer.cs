@@ -5,99 +5,8 @@
     using System.Linq;
     using System.Reflection;
 
-    public enum MemberwiseEqualityMode
+    public class MemberwiseEqualityComparer
     {
-        None,
-        ByFields,
-        ByFieldsRecursive,
-        ByProperties,
-        ByPropertiesRecursive
-    }
-
-    /// <summary>
-    /// Provides an implementation of <see cref="IEqualityComparer{T}"/> that performs memberwise
-    /// equality comparison of objects of type T. Use the <see cref="ByFields"/> or <see cref="ByProperties"/>
-    /// static instances to get one of the two comparison strategies that are supported by default. Note that both
-    /// honor <see cref="MemberwiseEqualityIgnoreAttribute"/>.
-    /// 
-    /// For more advanced scenarios, use the <see cref="Custom"/> creator and pass a <see cref="EqualityFunctionGenerator"/>
-    /// that matches your requirements.
-    /// </summary>
-    public class MemberwiseEqualityComparer<T> : IEqualityComparer<T>
-    {
-        private readonly Func<object, object, bool> _equalsFunc;
-
-        private readonly Func<object, int> _getHashCodeFunc;
-
-        private static readonly Lazy<MemberwiseEqualityComparer<T>> _defaultFieldsComparer =
-            new Lazy<MemberwiseEqualityComparer<T>>(
-                () =>
-                    new MemberwiseEqualityComparer<T>(
-                        new EqualityFunctionGenerator(
-                            typeof(T),
-                            AllFieldsExceptIgnored,
-                            t => new List<PropertyInfo>(),
-                            MemberwiseEqualityMode.ByFields)));
-
-        private static readonly Lazy<MemberwiseEqualityComparer<T>> _defaultPropertiesComparer =
-            new Lazy<MemberwiseEqualityComparer<T>>(
-                () =>
-                    new MemberwiseEqualityComparer<T>(
-                        new EqualityFunctionGenerator(
-                            typeof(T),
-                            t => new List<FieldInfo>(),
-                            AllPropertiesExceptIgnored,
-                            MemberwiseEqualityMode.ByProperties)));
-
-        private static readonly Lazy<MemberwiseEqualityComparer<T>> _recursiveFieldsComparer =
-            new Lazy<MemberwiseEqualityComparer<T>>(
-                () =>
-                    new MemberwiseEqualityComparer<T>(
-                        new EqualityFunctionGenerator(
-                            typeof(T),
-                            AllFieldsExceptIgnored,
-                            t => new List<PropertyInfo>(),
-                            MemberwiseEqualityMode.ByFieldsRecursive)));
-
-        private static readonly Lazy<MemberwiseEqualityComparer<T>> _recursivePropertiesComparer =
-            new Lazy<MemberwiseEqualityComparer<T>>(
-                () =>
-                    new MemberwiseEqualityComparer<T>(
-                        new EqualityFunctionGenerator(
-                            typeof(T),
-                            t => new List<FieldInfo>(),
-                            AllPropertiesExceptIgnored,
-                            MemberwiseEqualityMode.ByPropertiesRecursive)));
-
-        public static MemberwiseEqualityComparer<T> ByFields => _defaultFieldsComparer.Value;
-
-        public static MemberwiseEqualityComparer<T> ByProperties => _defaultPropertiesComparer.Value;
-
-        public static MemberwiseEqualityComparer<T> ByFieldsRecursive => _recursiveFieldsComparer.Value;
-
-        public static MemberwiseEqualityComparer<T> ByPropertiesRecursive => _recursivePropertiesComparer.Value;
-
-        public static MemberwiseEqualityComparer<T> Custom(EqualityFunctionGenerator equalityFunctionGenerator)
-        {
-            return new MemberwiseEqualityComparer<T>(equalityFunctionGenerator);
-        } 
-
-        private MemberwiseEqualityComparer(EqualityFunctionGenerator equalityFunctionGenerator)
-        {
-            _equalsFunc = equalityFunctionGenerator.MakeEqualsMethod();
-            _getHashCodeFunc = equalityFunctionGenerator.MakeGetHashCodeMethod();
-        }
-
-        private static IEnumerable<FieldInfo> AllFieldsExceptIgnored(Type t)
-        {
-            return t.GetTypeInfo().GetFields(AllInstanceMembers).Where(IsNotMarkedAsIgnore);
-        }
-
-        private static IEnumerable<PropertyInfo> AllPropertiesExceptIgnored(Type t)
-        {
-            return t.GetTypeInfo().GetProperties(AllInstanceMembers).Where(info => IsNotMarkedAsIgnore(info) && IsNotIndexed(info));
-        }
-
         private static BindingFlags AllInstanceMembers => BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         private static bool IsNotMarkedAsIgnore(MemberInfo memberInfo)
@@ -116,6 +25,91 @@
             var indexParamaters = propertyInfo.GetIndexParameters();
 
             return !indexParamaters.Any();
+        }
+
+        public static IEnumerable<FieldInfo> AllFieldsExceptIgnored(Type t)
+        {
+            return t.GetTypeInfo().GetFields(AllInstanceMembers).Where(IsNotMarkedAsIgnore);
+        }
+
+        public static IEnumerable<PropertyInfo> AllPropertiesExceptIgnored(Type t)
+        {
+            return t.GetTypeInfo().GetProperties(AllInstanceMembers).Where(info => IsNotMarkedAsIgnore(info) && IsNotIndexed(info));
+        }
+    }
+
+    /// <summary>
+    /// Provides an implementation of <see cref="IEqualityComparer{T}"/> that performs memberwise
+    /// equality comparison of objects of type T. Use the <see cref="ByFields"/> or <see cref="ByProperties"/>
+    /// static instances to get one of the two comparison strategies that are supported by default. Note that both
+    /// honor <see cref="MemberwiseEqualityIgnoreAttribute"/>.
+    /// 
+    /// For more advanced scenarios, use the <see cref="Custom"/> creator and pass a <see cref="EqualityFunctionGenerator"/>
+    /// that matches your requirements.
+    /// </summary>
+    public class MemberwiseEqualityComparer<T> : MemberwiseEqualityComparer, IEqualityComparer<T>
+    {
+        private readonly Func<object, object, bool> _equalsFunc;
+
+        private readonly Func<object, int> _getHashCodeFunc;
+
+        private static readonly Lazy<MemberwiseEqualityComparer<T>> _defaultFieldsComparer =
+            new Lazy<MemberwiseEqualityComparer<T>>(
+                () =>
+                    new MemberwiseEqualityComparer<T>(
+                        new EqualityFunctionGenerator(
+                            typeof(T),
+                            AllFieldsExceptIgnored,
+                            t => new List<PropertyInfo>(),
+                            new EqualityFunctionContext(MemberwiseEqualityMode.ByFields))));
+
+        private static readonly Lazy<MemberwiseEqualityComparer<T>> _defaultPropertiesComparer =
+            new Lazy<MemberwiseEqualityComparer<T>>(
+                () =>
+                    new MemberwiseEqualityComparer<T>(
+                        new EqualityFunctionGenerator(
+                            typeof(T),
+                            t => new List<FieldInfo>(),
+                            AllPropertiesExceptIgnored,
+                            new EqualityFunctionContext(MemberwiseEqualityMode.ByProperties))));
+
+        private static readonly Lazy<MemberwiseEqualityComparer<T>> _recursiveFieldsComparer =
+            new Lazy<MemberwiseEqualityComparer<T>>(
+                () =>
+                    new MemberwiseEqualityComparer<T>(
+                        new EqualityFunctionGenerator(
+                            typeof(T),
+                            AllFieldsExceptIgnored,
+                            t => new List<PropertyInfo>(),
+                            new EqualityFunctionContext(MemberwiseEqualityMode.ByFieldsRecursive))));
+
+        private static readonly Lazy<MemberwiseEqualityComparer<T>> _recursivePropertiesComparer =
+            new Lazy<MemberwiseEqualityComparer<T>>(
+                () =>
+                    new MemberwiseEqualityComparer<T>(
+                        new EqualityFunctionGenerator(
+                            typeof(T),
+                            t => new List<FieldInfo>(),
+                            AllPropertiesExceptIgnored,
+                            new EqualityFunctionContext(MemberwiseEqualityMode.ByPropertiesRecursive))));
+
+        public static MemberwiseEqualityComparer<T> ByFields => _defaultFieldsComparer.Value;
+
+        public static MemberwiseEqualityComparer<T> ByProperties => _defaultPropertiesComparer.Value;
+
+        public static MemberwiseEqualityComparer<T> ByFieldsRecursive => _recursiveFieldsComparer.Value;
+
+        public static MemberwiseEqualityComparer<T> ByPropertiesRecursive => _recursivePropertiesComparer.Value;
+
+        public static MemberwiseEqualityComparer<T> Custom(EqualityFunctionGenerator equalityFunctionGenerator)
+        {
+            return new MemberwiseEqualityComparer<T>(equalityFunctionGenerator);
+        } 
+
+        private MemberwiseEqualityComparer(EqualityFunctionGenerator equalityFunctionGenerator)
+        {
+            _equalsFunc = equalityFunctionGenerator.MakeEqualsMethod(this);
+            _getHashCodeFunc = equalityFunctionGenerator.MakeGetHashCodeMethod();
         }
 
         /// <summary>

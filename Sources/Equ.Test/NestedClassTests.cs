@@ -5,34 +5,47 @@ namespace Equ.Test
 {
     public class NestedClassTest
     {
-        public class Nested
+        public class Contained
         {
             public string BasicProperty { get; set; }
+            public Contained Nested { get; set; }
         }
 
         public class Container
         {
-            public Nested Nested { get; set; }
+            public Contained Nested { get; set; }
         }
 
         public static IEnumerable<object[]> ShouldDetermineCorrectEqualityTests => new List<object[]>
         {
             new object[] { new Container(), new Container(), MemberwiseEqualityComparer<Container>.ByProperties, true },
             new object[] {
-                new Container { Nested = new Nested() },
+                new Container { Nested = new Contained() },
                 new Container { },
                 MemberwiseEqualityComparer<Container>.ByProperties,
                 false
             },
             new object[] {
-                new Container { Nested = new Nested() },
-                new Container { Nested = new Nested() },
+                new Container { Nested = new Contained() },
+                new Container { Nested = new Contained() },
                 MemberwiseEqualityComparer<Container>.ByProperties,
                 false
             },
             new object[] {
-                new Container { Nested = new Nested() },
-                new Container { Nested = new Nested() },
+                new Container { Nested = new Contained() },
+                new Container { Nested = new Contained() },
+                MemberwiseEqualityComparer<Container>.ByPropertiesRecursive,
+                true
+            },
+            new object[] {
+                new Container { Nested = new Contained { Nested = new Contained() } },
+                new Container { Nested = new Contained() },
+                MemberwiseEqualityComparer<Container>.ByPropertiesRecursive,
+                false
+            },
+            new object[] {
+                new Container { Nested = new Contained { Nested = new Contained() } },
+                new Container { Nested = new Contained { Nested = new Contained() } },
                 MemberwiseEqualityComparer<Container>.ByPropertiesRecursive,
                 true
             }
