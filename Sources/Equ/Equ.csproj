@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.5;netstandard2.0;net6.0;net8.0</TargetFrameworks>
     <AssemblyVersion>2.3</AssemblyVersion>
     <FileVersion>2.3.0</FileVersion>
     <Version>2.3.0</Version>
@@ -9,7 +9,7 @@
     <Company>Dani Michel</Company>
     <Description>Fast, convention-based, zero-code equality functions</Description>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/thedmi/Equ</PackageProjectUrl>
     <PackageTags>equality, iequatable, generator</PackageTags>
     <Copyright>Dani Michel</Copyright>
