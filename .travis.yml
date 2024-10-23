@@ -1,5 +1,0 @@
-language: csharp
-mono: none
-dotnet: 2.1.502
-before_script: cd Sources
-script: dotnet restore && dotnet build && dotnet test Equ.Test/Equ.Test.csproj

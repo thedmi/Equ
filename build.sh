@@ -3,6 +3,6 @@
 pushd Sources
 
 dotnet restore && dotnet build
-dotnet test EquTest/EquTest.csproj
+dotnet test
 
 popd
